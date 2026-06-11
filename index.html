@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LingoChaps - Interactive Operations Manual</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Main Style Sheet -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-icon">LC</div>
+                <div class="logo-text">
+                    <h2>LingoChaps</h2>
+                    <span>Operations Manual</span>
+                </div>
+            </div>
+            
+            <div class="progress-section">
+                <div class="progress-info">
+                    <span>Training Progress</span>
+                    <span id="progress-percent">0%</span>
+                </div>
+                <div class="progress-bar-bg">
+                    <div class="progress-bar-fill" id="progress-bar"></div>
+                </div>
+            </div>
+
+            <nav class="nav-steps">
+                <button class="nav-step active" data-step="0">
+                    <span class="step-num">0</span>
+                    <span class="step-title">Welcome & Overview</span>
+                </button>
+                <button class="nav-step" data-step="1">
+                    <span class="step-num">1</span>
+                    <span class="step-title">1. Download Client Video</span>
+                </button>
+                <button class="nav-step" data-step="2">
+                    <span class="step-num">2</span>
+                    <span class="step-title">2. Trim to Timestamp</span>
+                </button>
+                <button class="nav-step" data-step="3">
+                    <span class="step-num">3</span>
+                    <span class="step-title">3. Upload to Lingochaps</span>
+                </button>
+                <button class="nav-step" data-step="4">
+                    <span class="step-num">4</span>
+                    <span class="step-title">4. Retrieve Word Reports</span>
+                </button>
+                <button class="nav-step" data-step="5">
+                    <span class="step-num">5</span>
+                    <span class="step-title">Training Complete</span>
+                </button>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <p>Need help? Contact</p>
+                <a href="mailto:support@lingochaps.com">support@lingochaps.com</a>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Top Navbar -->
+            <header class="top-navbar">
+                <h1 id="page-title">Operations Manual</h1>
+                <div class="header-actions">
+                    <div class="user-badge">
+                        <span class="avatar">T</span>
+                        <span class="username">Trainee Mode</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Grid Layout: Left is instructions, Right is Sandbox Simulator -->
+            <div class="workspace-grid">
+                <!-- Instruction Panel -->
+                <div class="card instruction-panel">
+                    <div class="instruction-content" id="instruction-text">
+                        <!-- Content injected by JavaScript -->
+                    </div>
+                    
+                    <div class="instruction-nav-buttons">
+                        <button id="prev-btn" class="btn btn-secondary" disabled>Back</button>
+                        <button id="next-btn" class="btn btn-primary">Continue</button>
+                    </div>
+                </div>
+
+                <!-- Sandbox Simulator Panel -->
+                <div class="card sandbox-panel">
+                    <div class="sandbox-header">
+                        <div class="sandbox-status">
+                            <span class="pulse-indicator"></span>
+                            <span id="sandbox-title">Interactive Training Sandbox</span>
+                        </div>
+                        <div class="sandbox-actions">
+                            <button class="btn btn-sm btn-outline" id="reset-sandbox-btn">Reset Step Sandbox</button>
+                        </div>
+                    </div>
+                    
+                    <div class="sandbox-body" id="sandbox-view">
+                        <!-- Interactive views injected here -->
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modals / Extra overlays can be injected here -->
+    <div id="toast" class="toast"></div>
+
+    <!-- Application Script -->
+    <script src="app.js"></script>
+</body>
+</html>
