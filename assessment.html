@@ -665,6 +665,11 @@
                 <h3 style="margin-top: 0;">Translator Interview Assessment</h3>
                 <p style="margin-bottom: 2rem;">This diagnostic test evaluates candidates during the hiring interview process. It checks basic computer handling, English grammar and sentence building, verbal reasoning, analytical reading, auditory listening transcription, and typing speed.</p>
                 
+                <div style="max-width: 400px; margin: 0 auto 2rem; text-align: left;">
+                    <label for="candidate-name" style="font-weight: 700; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-muted); display: block; margin-bottom: 8px;">Candidate Full Name</label>
+                    <input type="text" id="candidate-name" placeholder="Enter full name to begin" required style="width: 100%; padding: 12px 16px; border: 2px solid var(--border); border-radius: 10px; background-color: var(--bg-well); color: var(--text-main); font-size: 1rem; outline: none; transition: border-color 0.2s;" oninput="this.style.borderColor = this.value.trim() ? 'var(--primary)' : 'var(--border)';">
+                </div>
+
                 <div style="font-size: 0.9rem; margin-bottom: 1.5rem; text-align: left; max-width: 450px; margin-left: auto; margin-right: auto; color: var(--text-muted);">
                     <div style="margin-bottom: 8px;"><i class="fas fa-check" style="color: var(--secondary); margin-right: 8px;"></i> 12 General Multiple-Choice Questions</div>
                     <div style="margin-bottom: 8px;"><i class="fas fa-check" style="color: var(--secondary); margin-right: 8px;"></i> 2 Dialogue Listening Awareness Questions</div>
@@ -801,6 +806,9 @@
 
     <!-- Application Script for Tab Switching & Print Trigger -->
     <script>
+        // --- GOOGLE SHEETS INTEGRATION URL ---
+        const GOOGLE_SCRIPT_URL = ""; // Paste your Google Apps Script Web App URL here
+
         // --- ASSESSMENT TEST LOGIC ---
         const quizQuestions = [
             {
@@ -1010,6 +1018,7 @@
 
         let quizState = {
             active: false,
+            candidateName: "",
             currentQuestionIdx: 0,
             selectedTimeLimit: 900, // Fixed 15 minutes (900 seconds)
             timerInterval: null,
@@ -1056,6 +1065,18 @@
         document.getElementById('restart-quiz-btn').addEventListener('click', resetQuiz);
 
         function startQuiz() {
+            const nameInput = document.getElementById('candidate-name');
+            const candidateName = nameInput ? nameInput.value.trim() : '';
+            if (!candidateName) {
+                alert("Please enter your full name before starting the assessment.");
+                if (nameInput) {
+                    nameInput.focus();
+                    nameInput.style.borderColor = 'var(--danger)';
+                }
+                return;
+            }
+            quizState.candidateName = candidateName;
+
             quizState.active = true;
             quizState.currentQuestionIdx = 0;
             quizState.timeRemaining = quizState.selectedTimeLimit;
@@ -1470,6 +1491,67 @@
             // Typing breakdown stats display
             document.getElementById('score-val-typing').textContent = `${quizState.typingStats.wpm} WPM / ${quizState.typingStats.accuracy}% Acc`;
             document.getElementById('bar-fill-typing').style.width = `${Math.min(100, (quizState.typingStats.wpm / 40) * 100)}%`;
+
+            // Submit Results to Google Sheets
+            submitResultsToGoogleSheets(percentage, scoreCount, categoryScores);
+        }
+
+        function submitResultsToGoogleSheets(percentage, scoreCount, categoryScores) {
+            if (!GOOGLE_SCRIPT_URL) {
+                console.log("Google Apps Script URL is not configured. Results were not sent to Google Sheets.");
+                return;
+            }
+
+            const payload = {
+                timestamp: new Date().toISOString(),
+                candidateName: quizState.candidateName,
+                scorePercent: percentage,
+                scoreFraction: `${scoreCount}/${quizQuestions.length}`,
+                result: percentage >= 70 ? "PASS" : "FAIL",
+                computerScore: `${categoryScores.computer.correct}/${categoryScores.computer.total}`,
+                verbalScore: `${categoryScores.verbal.correct}/${categoryScores.verbal.total}`,
+                readingScore: `${categoryScores.reading.correct}/${categoryScores.reading.total}`,
+                listeningScore: `${categoryScores.listening.correct}/${categoryScores.listening.total}`,
+                typingWpm: quizState.typingStats.wpm,
+                typingAccuracy: quizState.typingStats.accuracy
+            };
+
+            // Display a status indicator in the results container
+            const resultsCard = document.getElementById('quiz-results-screen');
+            let statusIndicator = document.getElementById('sheets-submit-status');
+            if (!statusIndicator) {
+                statusIndicator = document.createElement('div');
+                statusIndicator.id = "sheets-submit-status";
+                statusIndicator.style.cssText = "margin-top: 15px; font-size: 0.85rem; text-align: center; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 10px; border-radius: 8px; background-color: var(--bg-well); border: 1px solid var(--border);";
+                resultsCard.insertBefore(statusIndicator, resultsCard.firstChild);
+            }
+            
+            statusIndicator.innerHTML = '<i class="fas fa-spinner fa-spin" style="color: var(--primary);"></i> Submitting results to Google Sheets database...';
+            statusIndicator.style.color = "var(--text-muted)";
+
+            fetch(GOOGLE_SCRIPT_URL, {
+                method: "POST",
+                mode: "no-cors", // Crucial redirection bypass for Google Apps Script Web Apps
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(payload)
+            })
+            .then(() => {
+                statusIndicator.innerHTML = '<i class="fas fa-check-circle" style="color: var(--secondary);"></i> Results successfully saved to Google Sheets.';
+                statusIndicator.style.color = "var(--secondary)";
+                statusIndicator.style.borderColor = "rgba(16, 185, 129, 0.2)";
+                statusIndicator.style.backgroundColor = "rgba(16, 185, 129, 0.05)";
+                setTimeout(() => statusIndicator.remove(), 6000);
+            })
+            .catch(error => {
+                console.error("Error submitting to Google Sheets:", error);
+                statusIndicator.innerHTML = '<i class="fas fa-exclamation-circle" style="color: var(--danger);"></i> Unable to save to Google Sheets database.';
+                statusIndicator.style.color = "var(--danger)";
+                statusIndicator.style.borderColor = "rgba(239, 68, 68, 0.2)";
+                statusIndicator.style.backgroundColor = "rgba(239, 68, 68, 0.05)";
+                setTimeout(() => statusIndicator.remove(), 6000);
+            });
         }
 
         function resetQuiz() {
