@@ -744,6 +744,9 @@
                     <div class="typing-metrics">
                         <span>Speed: <span class="typing-metric-val" id="quiz-typing-wpm">0</span> WPM</span>
                         <span>Accuracy: <span class="typing-metric-val" id="quiz-typing-accuracy">100%</span></span>
+                        <span id="quiz-typing-timer-container" style="margin-left: auto; display: flex; align-items: center; gap: 6px; transition: color 0.3s;">
+                            <i class="far fa-clock"></i> Time Left: <span class="typing-metric-val" id="quiz-typing-timer">60s</span>
+                        </span>
                     </div>
                 </div>
 
@@ -1265,9 +1268,28 @@
 
         // Typing logic
         let typingStartTime = null;
+        let typingTimerInterval = null;
+        let typingTimeRemaining = 60;
+        let typingTimerStarted = false;
+
         function setupTypingTest(target) {
             typingStartTime = null;
             qTypingTextarea.value = quizState.answers[14] || '';
+            qTypingTextarea.disabled = false;
+
+            // Reset typing timer states
+            clearInterval(typingTimerInterval);
+            typingTimerInterval = null;
+            typingTimeRemaining = 60;
+            typingTimerStarted = false;
+
+            const tTimerContainer = document.getElementById('quiz-typing-timer-container');
+            const tTimerDisplay = document.getElementById('quiz-typing-timer');
+            if (tTimerDisplay) tTimerDisplay.textContent = '60s';
+            if (tTimerContainer) {
+                tTimerContainer.style.color = '';
+                tTimerContainer.style.fontWeight = '';
+            }
 
             // Build chars array in target box
             qTypingDisplay.innerHTML = '';
@@ -1282,7 +1304,11 @@
             updateTypingHighlights(qTypingTextarea.value, target);
 
             qTypingTextarea.oninput = (e) => {
-                if (!typingStartTime) typingStartTime = new Date();
+                if (!typingTimerStarted) {
+                    typingTimerStarted = true;
+                    typingStartTime = new Date();
+                    startTypingTimer(target);
+                }
                 const typedVal = qTypingTextarea.value;
                 quizState.answers[14] = typedVal;
 
@@ -1290,7 +1316,37 @@
             };
         }
 
-        function updateTypingHighlights(typedVal, target) {
+        function startTypingTimer(target) {
+            const timerDisplay = document.getElementById('quiz-typing-timer');
+            const container = document.getElementById('quiz-typing-timer-container');
+            
+            clearInterval(typingTimerInterval);
+            typingTimerInterval = setInterval(() => {
+                typingTimeRemaining--;
+                if (timerDisplay) {
+                    timerDisplay.textContent = `${typingTimeRemaining}s`;
+                }
+                
+                if (typingTimeRemaining <= 10 && container) {
+                    container.style.color = 'var(--danger)';
+                    container.style.fontWeight = '700';
+                }
+                
+                if (typingTimeRemaining <= 0) {
+                    clearInterval(typingTimerInterval);
+                    qTypingTextarea.disabled = true;
+                    if (timerDisplay) {
+                        timerDisplay.textContent = "0s (Time's Up)";
+                    }
+                    
+                    // Calculate final metrics using exactly 1.0 minute elapsed
+                    const typedVal = qTypingTextarea.value;
+                    updateTypingHighlights(typedVal, target, 1.0);
+                }
+            }, 1000);
+        }
+
+        function updateTypingHighlights(typedVal, target, fixedElapsedMins) {
             let correctCount = 0;
             let errorCount = 0;
 
@@ -1313,7 +1369,14 @@
             });
 
             // Calculate metrics
-            const elapsedMins = typingStartTime ? (new Date() - typingStartTime) / 1000 / 60 : 0.01;
+            let elapsedMins;
+            if (fixedElapsedMins !== undefined) {
+                elapsedMins = fixedElapsedMins;
+            } else {
+                elapsedMins = typingStartTime ? (new Date() - typingStartTime) / 1000 / 60 : 0.01;
+                if (elapsedMins > 1.0) elapsedMins = 1.0;
+            }
+            
             const words = typedVal.length / 5;
             const wpm = Math.round(words / Math.max(0.01, elapsedMins));
             const totalKeys = typedVal.length;
@@ -1416,6 +1479,8 @@
         function prevQuestion() {
             if (quizState.currentQuestionIdx > 0) {
                 if (window.speechSynthesis) window.speechSynthesis.cancel();
+                clearInterval(typingTimerInterval);
+                typingTimerInterval = null;
                 quizState.currentQuestionIdx--;
                 renderQuestion();
             }
@@ -1423,6 +1488,8 @@
 
         function nextQuestion() {
             if (window.speechSynthesis) window.speechSynthesis.cancel();
+            clearInterval(typingTimerInterval);
+            typingTimerInterval = null;
 
             if (quizState.currentQuestionIdx < quizQuestions.length - 1) {
                 quizState.currentQuestionIdx++;
@@ -1435,6 +1502,8 @@
         function finishQuiz() {
             quizState.active = false;
             clearInterval(quizState.timerInterval);
+            clearInterval(typingTimerInterval);
+            typingTimerInterval = null;
 
             qTimerBar.style.display = 'none';
             qStepper.style.display = 'none';
@@ -1619,6 +1688,8 @@
 
         function resetQuiz() {
             if (window.speechSynthesis) window.speechSynthesis.cancel();
+            clearInterval(typingTimerInterval);
+            typingTimerInterval = null;
             qResultsScreen.style.display = 'none';
             qIntroScreen.style.display = 'block';
         }
