@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,10 +8,12 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap"
+        rel="stylesheet">
     <!-- FontAwesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+
     <style>
         :root {
             --primary: #4f46e5;
@@ -163,8 +166,15 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .assessment-header {
@@ -197,8 +207,13 @@
         }
 
         @keyframes pulse-border {
-            from { border-color: rgba(239, 68, 68, 0.2); }
-            to { border-color: var(--danger); }
+            from {
+                border-color: rgba(239, 68, 68, 0.2);
+            }
+
+            to {
+                border-color: var(--danger);
+            }
         }
 
         .quiz-intro {
@@ -405,9 +420,17 @@
         }
 
         @keyframes pulse-audio {
-            0% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.6); }
-            70% { box-shadow: 0 0 0 15px rgba(99, 102, 241, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0); }
+            0% {
+                box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.6);
+            }
+
+            70% {
+                box-shadow: 0 0 0 15px rgba(99, 102, 241, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(99, 102, 241, 0);
+            }
         }
 
         /* Stepper navigation */
@@ -624,6 +647,7 @@
         }
     </style>
 </head>
+
 <body>
 
     <!-- Top Navigation Header -->
@@ -636,7 +660,8 @@
             </div>
         </div>
         <div>
-            <button class="btn btn-secondary" id="theme-toggle-btn" title="Toggle Light/Dark Theme" style="padding: 0.6rem 0.8rem;"><i class="fas fa-moon"></i></button>
+            <button class="btn btn-secondary" id="theme-toggle-btn" title="Toggle Light/Dark Theme"
+                style="padding: 0.6rem 0.8rem;"><i class="fas fa-moon"></i></button>
         </div>
     </header>
 
@@ -662,30 +687,49 @@
             <!-- INTRO SCREEN -->
             <div id="quiz-intro-screen" class="quiz-intro">
                 <i class="fas fa-user-check big-icon"></i>
-                <h3 style="margin-top: 0;">Translator Interview Assessment</h3>
-                <p style="margin-bottom: 2rem;">This diagnostic test evaluates candidates during the hiring interview process. It checks basic computer handling, English grammar and sentence building, verbal reasoning, analytical reading, auditory listening transcription, and typing speed.</p>
-                
+                <h3 style="margin-top: 0;">Interview Assessment</h3>
+                <p style="margin-bottom: 2rem;">This diagnostic test evaluates candidates during the hiring interview
+                    process. It checks basic computer handling, English grammar and sentence building, verbal reasoning,
+                    analytical reading, auditory listening transcription, and typing speed.</p>
+
                 <div style="max-width: 400px; margin: 0 auto 2rem; text-align: left;">
-                    <label for="candidate-name" style="font-weight: 700; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-muted); display: block; margin-bottom: 8px;">Candidate Full Name</label>
-                    <input type="text" id="candidate-name" placeholder="Enter full name to begin" required style="width: 100%; padding: 12px 16px; border: 2px solid var(--border); border-radius: 10px; background-color: var(--bg-well); color: var(--text-main); font-size: 1rem; outline: none; transition: border-color 0.2s;" oninput="this.style.borderColor = this.value.trim() ? 'var(--primary)' : 'var(--border)';">
+                    <label for="candidate-name"
+                        style="font-weight: 700; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-muted); display: block; margin-bottom: 8px;">Candidate
+                        Full Name</label>
+                    <input type="text" id="candidate-name" placeholder="Enter full name to begin" required
+                        style="width: 100%; padding: 12px 16px; border: 2px solid var(--border); border-radius: 10px; background-color: var(--bg-well); color: var(--text-main); font-size: 1rem; outline: none; transition: border-color 0.2s;"
+                        oninput="this.style.borderColor = this.value.trim() ? 'var(--primary)' : 'var(--border)';">
                 </div>
 
-                <div style="font-size: 0.9rem; margin-bottom: 1.5rem; text-align: left; max-width: 450px; margin-left: auto; margin-right: auto; color: var(--text-muted);">
-                    <div style="margin-bottom: 8px;"><i class="fas fa-check" style="color: var(--secondary); margin-right: 8px;"></i> 12 General Multiple-Choice Questions</div>
-                    <div style="margin-bottom: 8px;"><i class="fas fa-check" style="color: var(--secondary); margin-right: 8px;"></i> 2 Dialogue Listening Awareness Questions</div>
-                    <div style="margin-bottom: 8px;"><i class="fas fa-check" style="color: var(--secondary); margin-right: 8px;"></i> 1 Live Typing Speed Test (1-Minute duration)</div>
-                    <div style="margin-bottom: 8px;"><i class="fas fa-clock" style="color: var(--warning); margin-right: 8px;"></i> 15-Minute Live Countdown Timer</div>
+                <div
+                    style="font-size: 0.9rem; margin-bottom: 1.5rem; text-align: left; max-width: 450px; margin-left: auto; margin-right: auto; color: var(--text-muted);">
+                    <div style="margin-bottom: 8px;"><i class="fas fa-check"
+                            style="color: var(--secondary); margin-right: 8px;"></i> 12 General Multiple-Choice
+                        Questions</div>
+                    <div style="margin-bottom: 8px;"><i class="fas fa-check"
+                            style="color: var(--secondary); margin-right: 8px;"></i> 2 Dialogue Listening Awareness
+                        Questions</div>
+                    <div style="margin-bottom: 8px;"><i class="fas fa-check"
+                            style="color: var(--secondary); margin-right: 8px;"></i> 1 Live Typing Speed Test (1-Minute
+                        duration)</div>
+                    <div style="margin-bottom: 8px;"><i class="fas fa-clock"
+                            style="color: var(--warning); margin-right: 8px;"></i> 15-Minute Live Countdown Timer</div>
                 </div>
 
                 <!-- Fixed timer starts automatically -->
-                <button class="btn" id="start-quiz-btn" style="padding: 0.8rem 2.5rem; font-size: 1rem; margin-top: 1rem;"><i class="fas fa-play"></i> Start Assessment</button>
+                <button class="btn" id="start-quiz-btn"
+                    style="padding: 0.8rem 2.5rem; font-size: 1rem; margin-top: 1rem;"><i class="fas fa-play"></i> Start
+                    Assessment</button>
             </div>
 
             <!-- RUNNING QUESTION VIEW -->
             <div id="quiz-question-screen" style="display: none;">
                 <!-- Heading of category -->
-                <h3 id="quiz-question-title" style="margin-top: 0; margin-bottom: 1rem; font-size: 1.15rem; color: var(--text-main);">Question Title</h3>
-                <p id="quiz-question-text" style="font-size: 1rem; margin-bottom: 1.5rem; color: var(--text-muted);">Question text goes here...</p>
+                <h3 id="quiz-question-title"
+                    style="margin-top: 0; margin-bottom: 1rem; font-size: 1.15rem; color: var(--text-main);">Question
+                    Title</h3>
+                <p id="quiz-question-text" style="font-size: 1rem; margin-bottom: 1.5rem; color: var(--text-muted);">
+                    Question text goes here...</p>
 
                 <!-- Options block (Radio cards) -->
                 <ul class="options-list" id="quiz-options-list">
@@ -695,7 +739,8 @@
                 <!-- Interactive typing test block -->
                 <div id="quiz-typing-block" style="display: none;">
                     <div class="typing-display" id="quiz-typing-display">Target text for typing...</div>
-                    <textarea class="typing-textarea" id="quiz-typing-textarea" placeholder="Start typing the text above exactly as shown..."></textarea>
+                    <textarea class="typing-textarea" id="quiz-typing-textarea"
+                        placeholder="Start typing the text above exactly as shown..."></textarea>
                     <div class="typing-metrics">
                         <span>Speed: <span class="typing-metric-val" id="quiz-typing-wpm">0</span> WPM</span>
                         <span>Accuracy: <span class="typing-metric-val" id="quiz-typing-accuracy">100%</span></span>
@@ -707,14 +752,17 @@
                     <div class="audio-test-container">
                         <button class="audio-play-btn" id="quiz-audio-btn"><i class="fas fa-play"></i></button>
                         <div>
-                            <h4 style="color: var(--text-main); font-size: 0.95rem; margin-bottom: 4px;">Audio Player Simulator</h4>
-                            <p style="font-size:0.8rem; color: var(--text-muted); margin:0;">Click to play the conversation. Listen carefully to the speakers and answer the question below.</p>
+                            <h4 style="color: var(--text-main); font-size: 0.95rem; margin-bottom: 4px;">Audio Player
+                                Simulator</h4>
+                            <p style="font-size:0.8rem; color: var(--text-muted); margin:0;">Click to play the
+                                conversation. Listen carefully to the speakers and answer the question below.</p>
                         </div>
                     </div>
                 </div>
 
                 <!-- Stepper navigation buttons -->
-                <div style="margin-top: 2rem; border-top: 1px solid var(--border); padding-top: 1.5rem; display: flex; justify-content: space-between;">
+                <div
+                    style="margin-top: 2rem; border-top: 1px solid var(--border); padding-top: 1.5rem; display: flex; justify-content: space-between;">
                     <button id="quiz-prev-btn" class="btn btn-secondary">Back</button>
                     <button id="quiz-next-btn" class="btn">Next <i class="fas fa-chevron-right"></i></button>
                 </div>
@@ -723,39 +771,46 @@
             <!-- RESULTS SCREEN -->
             <div id="quiz-results-screen" style="display: none;" class="results-container">
                 <h3 style="margin-top: 0; text-align: center; font-size: 1.5rem;">Diagnostic Assessment Complete</h3>
-                
+
                 <div class="results-dashboard-grid">
                     <!-- Left: Score circle -->
                     <div class="score-circle-card">
                         <div class="circular-meter">
                             <svg>
                                 <circle class="meter-bg" cx="75" cy="75" r="65"></circle>
-                                <circle class="meter-fill" id="results-meter-fill" cx="75" cy="75" r="65" stroke-dasharray="408.4" stroke-dashoffset="408.4"></circle>
+                                <circle class="meter-fill" id="results-meter-fill" cx="75" cy="75" r="65"
+                                    stroke-dasharray="408.4" stroke-dashoffset="408.4"></circle>
                             </svg>
                             <div class="meter-text" id="results-score-percent">0%</div>
                         </div>
                         <div id="results-badge" class="result-badge pass">PASS</div>
-                        <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 1rem; margin-bottom: 0;" id="results-grade-text">Great job! You possess strong overall core knowledge.</p>
+                        <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 1rem; margin-bottom: 0;"
+                            id="results-grade-text">Great job! You possess strong overall core knowledge.</p>
                     </div>
 
                     <!-- Right: Category breakdown -->
                     <div class="bar-chart-card">
-                        <h4 style="margin-top: 0; margin-bottom: 1.25rem; font-size: 1.05rem; color: var(--text-main);">Competency Strengths</h4>
-                        
+                        <h4 style="margin-top: 0; margin-bottom: 1.25rem; font-size: 1.05rem; color: var(--text-main);">
+                            Competency Strengths</h4>
+
                         <div class="bar-item">
                             <div class="bar-item-header">
                                 <span>Basic Computer Handling & Literacy</span>
                                 <span id="score-val-computer">0/2</span>
                             </div>
-                            <div class="bar-track"><div class="bar-fill" id="bar-fill-computer" style="width: 0%;"></div></div>
+                            <div class="bar-track">
+                                <div class="bar-fill" id="bar-fill-computer" style="width: 0%;"></div>
+                            </div>
                         </div>
-                        
+
                         <div class="bar-item">
                             <div class="bar-item-header">
                                 <span>English Grammar & Vocabulary</span>
                                 <span id="score-val-verbal">0/6</span>
                             </div>
-                            <div class="bar-track"><div class="bar-fill" id="bar-fill-verbal" style="width: 0%;"></div></div>
+                            <div class="bar-track">
+                                <div class="bar-fill" id="bar-fill-verbal" style="width: 0%;"></div>
+                            </div>
                         </div>
 
                         <div class="bar-item">
@@ -763,7 +818,9 @@
                                 <span>Logical Reasoning & Reading</span>
                                 <span id="score-val-reading">0/4</span>
                             </div>
-                            <div class="bar-track"><div class="bar-fill" id="bar-fill-reading" style="width: 0%;"></div></div>
+                            <div class="bar-track">
+                                <div class="bar-fill" id="bar-fill-reading" style="width: 0%;"></div>
+                            </div>
                         </div>
 
                         <div class="bar-item">
@@ -771,7 +828,9 @@
                                 <span>Auditory Listening & Awareness</span>
                                 <span id="score-val-listening">0/2</span>
                             </div>
-                            <div class="bar-track"><div class="bar-fill" id="bar-fill-listening" style="width: 0%;"></div></div>
+                            <div class="bar-track">
+                                <div class="bar-fill" id="bar-fill-listening" style="width: 0%;"></div>
+                            </div>
                         </div>
 
                         <div class="bar-item" style="margin-bottom: 0;">
@@ -779,14 +838,18 @@
                                 <span>Typing Performance</span>
                                 <span id="score-val-typing">0 WPM / 0% Acc</span>
                             </div>
-                            <div class="bar-track"><div class="bar-fill" id="bar-fill-typing" style="width: 0%;"></div></div>
+                            <div class="bar-track">
+                                <div class="bar-fill" id="bar-fill-typing" style="width: 0%;"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Review list -->
                 <div>
-                    <h4 style="margin-bottom: 1rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; color: var(--text-main); text-align: left;">Detailed Answer Review</h4>
+                    <h4
+                        style="margin-bottom: 1rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; color: var(--text-main); text-align: left;">
+                        Detailed Answer Review</h4>
                     <div id="results-review-container">
                         <!-- Injected by JS -->
                     </div>
@@ -1082,7 +1145,7 @@
             quizState.timeRemaining = quizState.selectedTimeLimit;
             quizState.answers = {};
             quizState.typingStats = { wpm: 0, accuracy: 100, errors: 0, typedLength: 0 };
-            
+
             qIntroScreen.style.display = 'none';
             qResultsScreen.style.display = 'none';
             qTimerBar.style.display = 'flex';
@@ -1090,7 +1153,7 @@
             qQuestionScreen.style.display = 'block';
 
             qTimerBox.classList.remove('danger');
-            
+
             // Build stepper dots
             qStepperDots.innerHTML = '';
             quizQuestions.forEach((q, idx) => {
@@ -1176,7 +1239,7 @@
                     qListeningBlock.style.display = 'block';
                     setupListeningTest();
                 }
-                
+
                 // Show and render MCQ options
                 qOptionsList.style.display = 'flex';
                 qOptionsList.innerHTML = '';
@@ -1191,7 +1254,7 @@
                         document.querySelectorAll('.option-item').forEach(el => el.classList.remove('selected'));
                         li.classList.add('selected');
                         quizState.answers[currentIdx] = oIdx;
-                        
+
                         const dot = document.getElementById(`stepper-dot-${currentIdx}`);
                         if (dot) dot.classList.add('completed');
                     });
@@ -1205,7 +1268,7 @@
         function setupTypingTest(target) {
             typingStartTime = null;
             qTypingTextarea.value = quizState.answers[14] || '';
-            
+
             // Build chars array in target box
             qTypingDisplay.innerHTML = '';
             target.split('').forEach((char, idx) => {
@@ -1222,7 +1285,7 @@
                 if (!typingStartTime) typingStartTime = new Date();
                 const typedVal = qTypingTextarea.value;
                 quizState.answers[14] = typedVal;
-                
+
                 updateTypingHighlights(typedVal, target);
             };
         }
@@ -1234,7 +1297,7 @@
             target.split('').forEach((char, idx) => {
                 const span = document.getElementById(`typing-char-${idx}`);
                 if (!span) return;
-                
+
                 span.className = '';
                 if (idx < typedVal.length) {
                     if (typedVal[idx] === char) {
@@ -1381,7 +1444,7 @@
             // Grade questions
             let scoreCount = 0;
             let totalMaxScore = quizQuestions.length;
-            
+
             let categoryScores = {
                 computer: { correct: 0, total: 2 },
                 verbal: { correct: 0, total: 6 },
@@ -1409,7 +1472,7 @@
                     }
                     userValStr = `${quizState.typingStats.wpm} WPM / ${quizState.typingStats.accuracy}% Accuracy`;
                     correctValStr = `Complete typing with WPM > 30 and Accuracy >= 85%`;
-                } 
+                }
                 else if (q.category === 'listening') {
                     const userAnsIdx = quizState.answers[idx];
                     if (userAnsIdx === q.correct) {
@@ -1525,7 +1588,7 @@
                 statusIndicator.style.cssText = "margin-top: 15px; font-size: 0.85rem; text-align: center; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 10px; border-radius: 8px; background-color: var(--bg-well); border: 1px solid var(--border);";
                 resultsCard.insertBefore(statusIndicator, resultsCard.firstChild);
             }
-            
+
             statusIndicator.innerHTML = '<i class="fas fa-spinner fa-spin" style="color: var(--primary);"></i> Submitting results to Google Sheets database...';
             statusIndicator.style.color = "var(--text-muted)";
 
@@ -1537,21 +1600,21 @@
                 },
                 body: JSON.stringify(payload)
             })
-            .then(() => {
-                statusIndicator.innerHTML = '<i class="fas fa-check-circle" style="color: var(--secondary);"></i> Results successfully saved to Google Sheets.';
-                statusIndicator.style.color = "var(--secondary)";
-                statusIndicator.style.borderColor = "rgba(16, 185, 129, 0.2)";
-                statusIndicator.style.backgroundColor = "rgba(16, 185, 129, 0.05)";
-                setTimeout(() => statusIndicator.remove(), 6000);
-            })
-            .catch(error => {
-                console.error("Error submitting to Google Sheets:", error);
-                statusIndicator.innerHTML = '<i class="fas fa-exclamation-circle" style="color: var(--danger);"></i> Unable to save to Google Sheets database.';
-                statusIndicator.style.color = "var(--danger)";
-                statusIndicator.style.borderColor = "rgba(239, 68, 68, 0.2)";
-                statusIndicator.style.backgroundColor = "rgba(239, 68, 68, 0.05)";
-                setTimeout(() => statusIndicator.remove(), 6000);
-            });
+                .then(() => {
+                    statusIndicator.innerHTML = '<i class="fas fa-check-circle" style="color: var(--secondary);"></i> Results successfully saved to Google Sheets.';
+                    statusIndicator.style.color = "var(--secondary)";
+                    statusIndicator.style.borderColor = "rgba(16, 185, 129, 0.2)";
+                    statusIndicator.style.backgroundColor = "rgba(16, 185, 129, 0.05)";
+                    setTimeout(() => statusIndicator.remove(), 6000);
+                })
+                .catch(error => {
+                    console.error("Error submitting to Google Sheets:", error);
+                    statusIndicator.innerHTML = '<i class="fas fa-exclamation-circle" style="color: var(--danger);"></i> Unable to save to Google Sheets database.';
+                    statusIndicator.style.color = "var(--danger)";
+                    statusIndicator.style.borderColor = "rgba(239, 68, 68, 0.2)";
+                    statusIndicator.style.backgroundColor = "rgba(239, 68, 68, 0.05)";
+                    setTimeout(() => statusIndicator.remove(), 6000);
+                });
         }
 
         function resetQuiz() {
@@ -1582,4 +1645,5 @@
         });
     </script>
 </body>
+
 </html>
