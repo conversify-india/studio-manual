@@ -1,0 +1,1823 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome to LingoChaps — Internal Team Onboarding</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --brand-primary: #4f46e5;
+      --brand-secondary: #06b6d4;
+      --brand-accent: #f59e0b;
+      --brand-green: #10b981;
+      --brand-red: #ef4444;
+      --brand-purple: #8b5cf6;
+      --bg-dark: #0a0a1a;
+      --bg-card: rgba(255,255,255,0.05);
+      --bg-card-hover: rgba(255,255,255,0.08);
+      --text-primary: #f8fafc;
+      --text-secondary: rgba(248,250,252,0.7);
+      --text-muted: rgba(248,250,252,0.45);
+      --border: rgba(255,255,255,0.1);
+      --border-bright: rgba(255,255,255,0.2);
+      --slide-bg: linear-gradient(135deg, #0a0a1a 0%, #0f0f2e 50%, #0a0a1a 100%);
+      --glow-blue: rgba(79,70,229,0.3);
+      --glow-cyan: rgba(6,182,212,0.3);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg-dark);
+      color: var(--text-primary);
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── HEADER BAR ── */
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2rem;
+      height: 56px;
+      background: rgba(10,10,26,0.9);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(20px);
+      flex-shrink: 0;
+      z-index: 100;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: 1.1rem;
+      letter-spacing: -0.02em;
+    }
+
+    .brand-dot {
+      width: 28px; height: 28px;
+      background: linear-gradient(135deg, var(--brand-primary), var(--brand-secondary));
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px;
+    }
+
+    .top-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .slide-counter {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 500;
+      letter-spacing: 0.05em;
+    }
+
+    .voiceover-btn {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 6px 14px;
+      background: rgba(79,70,229,0.15);
+      border: 1px solid rgba(79,70,229,0.4);
+      border-radius: 20px;
+      color: #a5b4fc;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      letter-spacing: 0.02em;
+    }
+
+    .voiceover-btn:hover {
+      background: rgba(79,70,229,0.25);
+      border-color: rgba(79,70,229,0.6);
+    }
+
+    .voiceover-btn.active {
+      background: rgba(79,70,229,0.35);
+      border-color: #6366f1;
+      color: #c7d2fe;
+    }
+
+    .vo-wave { display: flex; gap: 2px; align-items: center; height: 14px; }
+    .vo-wave span {
+      display: block; width: 2px; background: #a5b4fc; border-radius: 2px;
+      animation: wave 1.2s ease-in-out infinite;
+    }
+    .vo-wave span:nth-child(1) { height: 4px; animation-delay: 0s; }
+    .vo-wave span:nth-child(2) { height: 10px; animation-delay: 0.15s; }
+    .vo-wave span:nth-child(3) { height: 14px; animation-delay: 0.3s; }
+    .vo-wave span:nth-child(4) { height: 8px; animation-delay: 0.45s; }
+    .vo-wave span:nth-child(5) { height: 4px; animation-delay: 0.6s; }
+    @keyframes wave { 0%,100% { transform: scaleY(0.5); } 50% { transform: scaleY(1); } }
+    .voiceover-btn:not(.active) .vo-wave span { animation: none; height: 6px; }
+
+    .fullscreen-btn {
+      width: 32px; height: 32px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+    .fullscreen-btn:hover { color: var(--text-primary); border-color: var(--border-bright); }
+
+    .voice-select {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      color: var(--text-secondary);
+      font-size: 0.72rem;
+      padding: 6px 10px;
+      cursor: pointer;
+      outline: none;
+      transition: all 0.2s;
+      max-width: 160px;
+      font-weight: 500;
+    }
+    .voice-select:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--border-bright);
+      color: var(--text-primary);
+    }
+    .voice-select option {
+      background: #0a0a1a;
+      color: var(--text-primary);
+    }
+
+    /* ── SLIDE AREA ── */
+    .slide-viewport {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 4rem;
+      background: var(--slide-bg);
+      opacity: 0;
+      transform: translateX(60px);
+      transition: opacity 0.5s cubic-bezier(0.4,0,0.2,1), transform 0.5s cubic-bezier(0.4,0,0.2,1);
+      pointer-events: none;
+      overflow-y: auto;
+    }
+
+    .slide.active {
+      opacity: 1;
+      transform: translateX(0);
+      pointer-events: all;
+    }
+
+    .slide.exit-left {
+      opacity: 0;
+      transform: translateX(-60px);
+    }
+
+    /* Ambient glow orbs */
+    .slide::before {
+      content: '';
+      position: fixed;
+      top: -200px; left: -200px;
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, var(--glow-blue) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .slide::after {
+      content: '';
+      position: fixed;
+      bottom: -200px; right: -200px;
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, var(--glow-cyan) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .slide-inner {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 1000px;
+    }
+
+    /* ── MODULE BADGE ── */
+    .module-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 14px;
+      border-radius: 20px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+      border: 1px solid;
+    }
+
+    .badge-welcome { background: rgba(79,70,229,0.15); border-color: rgba(79,70,229,0.4); color: #a5b4fc; }
+    .badge-module1 { background: rgba(6,182,212,0.15); border-color: rgba(6,182,212,0.4); color: #67e8f9; }
+    .badge-module2 { background: rgba(16,185,129,0.15); border-color: rgba(16,185,129,0.4); color: #6ee7b7; }
+    .badge-module3 { background: rgba(245,158,11,0.15); border-color: rgba(245,158,11,0.4); color: #fcd34d; }
+    .badge-module4 { background: rgba(139,92,246,0.15); border-color: rgba(139,92,246,0.4); color: #c4b5fd; }
+    .badge-module5 { background: rgba(239,68,68,0.15); border-color: rgba(239,68,68,0.4); color: #fca5a5; }
+    .badge-summary { background: rgba(16,185,129,0.15); border-color: rgba(16,185,129,0.4); color: #6ee7b7; }
+
+    /* ── TYPOGRAPHY ── */
+    .slide-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: clamp(2rem, 4vw, 3.5rem);
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+      margin-bottom: 1rem;
+      background: linear-gradient(135deg, #f8fafc 0%, rgba(248,250,252,0.7) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .slide-title .highlight {
+      background: linear-gradient(135deg, var(--brand-primary), var(--brand-secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .slide-subtitle {
+      font-size: 1rem;
+      color: var(--text-secondary);
+      line-height: 1.7;
+      max-width: 620px;
+      margin-bottom: 2rem;
+    }
+
+    .slide-h2 {
+      font-family: 'Outfit', sans-serif;
+      font-size: clamp(1.5rem, 3vw, 2.2rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.75rem;
+      line-height: 1.2;
+    }
+
+    /* ── COVER SLIDE SPECIFIC ── */
+    .cover-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 1.5rem;
+    }
+
+    .cover-tag {
+      padding: 6px 16px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 500;
+      letter-spacing: 0.03em;
+    }
+
+    .cover-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    .cover-stat {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.25rem 1.5rem;
+      transition: all 0.3s;
+    }
+
+    .cover-stat:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--border-bright);
+      transform: translateY(-3px);
+    }
+
+    .cover-stat .stat-label {
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .cover-stat .stat-val {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--text-primary);
+    }
+
+    .cover-stat .stat-desc {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      margin-top: 3px;
+    }
+
+    /* ── CARD GRID ── */
+    .card-grid {
+      display: grid;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    .card-grid.cols-2 { grid-template-columns: 1fr 1fr; }
+    .card-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+    .card-grid.cols-4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
+
+    .info-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.5rem;
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .info-card:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--border-bright);
+      transform: translateY(-3px);
+    }
+
+    .info-card .card-icon {
+      font-size: 1.8rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .info-card .card-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 0.4rem;
+    }
+
+    .info-card .card-body {
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    .info-card .card-accent {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      border-radius: 16px 16px 0 0;
+    }
+
+    /* ── RULE LIST ── */
+    .rule-list {
+      list-style: none;
+      margin-top: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .rule-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 1rem 1.25rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      transition: all 0.25s;
+    }
+
+    .rule-item:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--border-bright);
+    }
+
+    .rule-icon {
+      width: 32px; height: 32px;
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+
+    .rule-text strong {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    .rule-text span {
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    /* ── TWO COL COMPARISON ── */
+    .comparison {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    .comp-card {
+      border-radius: 16px;
+      padding: 1.5rem;
+      border: 1px solid;
+    }
+
+    .comp-card.wrong {
+      background: rgba(239,68,68,0.07);
+      border-color: rgba(239,68,68,0.3);
+    }
+
+    .comp-card.right {
+      background: rgba(16,185,129,0.07);
+      border-color: rgba(16,185,129,0.3);
+    }
+
+    .comp-label {
+      font-size: 0.65rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 0.75rem;
+    }
+
+    .comp-card.wrong .comp-label { color: #fca5a5; }
+    .comp-card.right .comp-label { color: #6ee7b7; }
+
+    .comp-content {
+      font-size: 0.82rem;
+      line-height: 1.6;
+      color: var(--text-secondary);
+    }
+
+    .comp-content strong {
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+
+    .comp-content .source {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .comp-content .value {
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+    }
+
+    .comp-card.wrong .value { color: #fca5a5; }
+    .comp-card.right .value { color: #6ee7b7; }
+
+    /* ── STEP FLOW ── */
+    .step-flow {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      margin-top: 1.5rem;
+    }
+
+    .step-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      padding: 1rem 0;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+    }
+
+    .step-row:last-child { border-bottom: none; }
+
+    .step-num {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--brand-primary), var(--brand-secondary));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.8rem;
+      font-weight: 700;
+      flex-shrink: 0;
+      box-shadow: 0 4px 12px var(--glow-blue);
+    }
+
+    .step-body h3 {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 3px;
+    }
+
+    .step-body p {
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+      line-height: 1.55;
+    }
+
+    /* ── HIERARCHY TREE ── */
+    .tree-box {
+      background: rgba(0,0,0,0.3);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.25rem 1.5rem;
+      font-family: 'Courier New', monospace;
+      font-size: 0.8rem;
+      line-height: 1.8;
+    }
+
+    .tree-branch {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .tree-indent-1 { margin-left: 1.5rem; }
+    .tree-indent-2 { margin-left: 3rem; }
+    .tree-indent-3 { margin-left: 4.5rem; }
+    .tree-indent-4 { margin-left: 6rem; }
+    .tree-indent-5 { margin-left: 7.5rem; }
+
+    /* ── GLOSSARY GRID ── */
+    .glossary-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+      margin-top: 1.25rem;
+    }
+
+    .gloss-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
+      transition: all 0.25s;
+    }
+
+    .gloss-item:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--border-bright);
+    }
+
+    .gloss-term {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 3px;
+    }
+
+    .gloss-def {
+      font-size: 0.72rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    .gloss-tag {
+      display: inline-block;
+      padding: 2px 7px;
+      border-radius: 6px;
+      font-size: 0.6rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 5px;
+    }
+
+    .tag-file { background: rgba(79,70,229,0.15); color: #a5b4fc; }
+    .tag-process { background: rgba(6,182,212,0.15); color: #67e8f9; }
+    .tag-quality { background: rgba(239,68,68,0.15); color: #fca5a5; }
+    .tag-tool { background: rgba(139,92,246,0.15); color: #c4b5fd; }
+    .tag-client { background: rgba(245,158,11,0.15); color: #fcd34d; }
+
+    /* ── CHECKLIST ── */
+    .checklist {
+      list-style: none;
+      margin-top: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .check-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0.85rem 1.25rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      transition: all 0.25s;
+    }
+
+    .check-item:hover {
+      background: var(--bg-card-hover);
+      color: var(--text-primary);
+    }
+
+    .check-icon {
+      width: 22px; height: 22px;
+      background: rgba(16,185,129,0.15);
+      border: 1px solid rgba(16,185,129,0.4);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.65rem;
+      color: #6ee7b7;
+      flex-shrink: 0;
+    }
+
+    /* ── WARNING BOX ── */
+    .warn-box {
+      margin-top: 1.25rem;
+      padding: 1rem 1.25rem;
+      background: rgba(245,158,11,0.08);
+      border: 1px solid rgba(245,158,11,0.3);
+      border-left: 3px solid var(--brand-accent);
+      border-radius: 10px;
+      font-size: 0.78rem;
+      color: #fcd34d;
+      line-height: 1.6;
+    }
+
+    .warn-box strong { font-weight: 700; }
+
+    /* ── ERROR BOX ── */
+    .error-box {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      padding: 1rem 1.25rem;
+      background: rgba(239,68,68,0.08);
+      border: 1px solid rgba(239,68,68,0.25);
+      border-left: 3px solid var(--brand-red);
+      border-radius: 10px;
+      margin-bottom: 0.75rem;
+      font-size: 0.78rem;
+    }
+
+    .error-box .err-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 1px; }
+    .error-box strong { display: block; color: #fca5a5; font-weight: 700; margin-bottom: 2px; }
+    .error-box p { color: var(--text-secondary); line-height: 1.5; }
+
+    /* ── SUMMARY CARDS ── */
+    .summary-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    .sum-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.25rem;
+      text-align: center;
+      transition: all 0.3s;
+    }
+
+    .sum-card:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--border-bright);
+      transform: translateY(-3px);
+    }
+
+    .sum-card .sum-emoji { font-size: 1.8rem; margin-bottom: 0.5rem; }
+    .sum-card .sum-title { font-size: 0.82rem; font-weight: 700; color: var(--text-primary); margin-bottom: 4px; }
+    .sum-card .sum-desc { font-size: 0.72rem; color: var(--text-secondary); line-height: 1.5; }
+
+    /* ── HERO COVER ── */
+    .hero-layout {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 3rem;
+      align-items: center;
+    }
+
+    .hero-visual {
+      position: relative;
+    }
+
+    .hero-orb {
+      width: 280px; height: 280px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 40% 40%, rgba(79,70,229,0.4), rgba(6,182,212,0.2), transparent 70%);
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto;
+    }
+
+    .hero-orb::before {
+      content: '';
+      position: absolute;
+      inset: 20px;
+      border-radius: 50%;
+      border: 1px solid rgba(79,70,229,0.3);
+      animation: orbPulse 3s ease-in-out infinite;
+    }
+
+    .hero-orb::after {
+      content: '';
+      position: absolute;
+      inset: 50px;
+      border-radius: 50%;
+      border: 1px solid rgba(6,182,212,0.3);
+      animation: orbPulse 3s ease-in-out infinite 1.5s;
+    }
+
+    @keyframes orbPulse {
+      0%, 100% { transform: scale(1); opacity: 0.5; }
+      50% { transform: scale(1.05); opacity: 1; }
+    }
+
+    .hero-center-text {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+    }
+
+    .hero-center-text .big-emoji { font-size: 4rem; display: block; margin-bottom: 0.5rem; }
+    .hero-center-text p { font-size: 0.75rem; color: var(--text-muted); font-weight: 500; }
+
+    /* ── PROGRESS PILLS ── */
+    .module-progress {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 1rem;
+    }
+
+    .prog-pill {
+      height: 4px;
+      border-radius: 4px;
+      background: var(--border);
+      flex: 1;
+      transition: background 0.4s;
+    }
+
+    .prog-pill.done { background: var(--brand-primary); }
+    .prog-pill.active { background: var(--brand-secondary); animation: pillPulse 1.5s ease-in-out infinite; }
+    @keyframes pillPulse { 0%,100% { opacity: 0.7; } 50% { opacity: 1; } }
+
+    /* ── TWO-COLUMN LAYOUT ── */
+    .two-col-layout {
+      display: grid;
+      grid-template-columns: 1.1fr 1fr;
+      gap: 2rem;
+      align-items: start;
+    }
+
+    /* ── BOTTOM NAV ── */
+    .bottom-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.75rem 2rem;
+      background: rgba(10,10,26,0.9);
+      border-top: 1px solid var(--border);
+      backdrop-filter: blur(20px);
+      flex-shrink: 0;
+    }
+
+    .nav-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 20px;
+      border-radius: 10px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      color: var(--text-secondary);
+      letter-spacing: 0.02em;
+    }
+
+    .nav-btn:hover:not(:disabled) {
+      background: var(--bg-card-hover);
+      border-color: var(--border-bright);
+      color: var(--text-primary);
+    }
+
+    .nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+    .nav-btn.primary {
+      background: linear-gradient(135deg, var(--brand-primary), rgba(79,70,229,0.7));
+      border-color: rgba(79,70,229,0.5);
+      color: white;
+    }
+
+    .nav-btn.primary:hover:not(:disabled) {
+      background: linear-gradient(135deg, rgba(99,102,241,1), var(--brand-primary));
+      box-shadow: 0 4px 15px var(--glow-blue);
+    }
+
+    .pips {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .pip {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--border);
+      transition: all 0.3s;
+      cursor: pointer;
+    }
+
+    .pip.on {
+      background: var(--brand-primary);
+      width: 18px;
+      border-radius: 3px;
+    }
+
+    /* ── KEYBOARD HINT ── */
+    .key-hint {
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .kbd {
+      padding: 1px 5px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      font-size: 0.6rem;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      .slide { padding: 2rem; }
+      .hero-layout, .two-col-layout, .comparison, .card-grid.cols-3, .card-grid.cols-4, .summary-grid, .glossary-grid { grid-template-columns: 1fr; }
+      .hero-visual { display: none; }
+      .cover-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    /* ── ANIMATED ENTRANCE ── */
+    .slide.active .slide-inner > * {
+      animation: slideIn 0.5s cubic-bezier(0.4,0,0.2,1) both;
+    }
+
+    .slide.active .slide-inner > *:nth-child(1) { animation-delay: 0.05s; }
+    .slide.active .slide-inner > *:nth-child(2) { animation-delay: 0.12s; }
+    .slide.active .slide-inner > *:nth-child(3) { animation-delay: 0.19s; }
+    .slide.active .slide-inner > *:nth-child(4) { animation-delay: 0.26s; }
+    .slide.active .slide-inner > *:nth-child(5) { animation-delay: 0.33s; }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── SPEAKING INDICATOR ── */
+    .speaking-bar {
+      position: fixed;
+      bottom: 68px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(10,10,26,0.95);
+      border: 1px solid rgba(79,70,229,0.4);
+      border-radius: 30px;
+      padding: 8px 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.75rem;
+      color: #a5b4fc;
+      font-weight: 500;
+      opacity: 0;
+      transition: opacity 0.3s;
+      z-index: 200;
+      pointer-events: none;
+      max-width: 90%;
+    }
+
+    .speaking-bar.visible { opacity: 1; }
+
+    .speak-waves { display: flex; gap: 2px; align-items: center; }
+    .speak-waves span {
+      display: block; width: 3px; background: #a5b4fc; border-radius: 3px;
+      animation: wave 1s ease-in-out infinite;
+    }
+    .speak-waves span:nth-child(1) { height: 6px; animation-delay: 0s; }
+    .speak-waves span:nth-child(2) { height: 12px; animation-delay: 0.1s; }
+    .speak-waves span:nth-child(3) { height: 18px; animation-delay: 0.2s; }
+    .speak-waves span:nth-child(4) { height: 12px; animation-delay: 0.3s; }
+    .speak-waves span:nth-child(5) { height: 6px; animation-delay: 0.4s; }
+
+    .speak-text {
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* ── WIDE RULE LIST ── */
+    .wide-rule-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      margin-top: 1.25rem;
+    }
+
+    .wide-rule-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 0.75rem 1rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      transition: all 0.2s;
+    }
+
+    .wide-rule-item:hover { background: var(--bg-card-hover); }
+
+    .wide-rule-item .dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      margin-top: 4px;
+    }
+
+    .dot-blue { background: var(--brand-primary); box-shadow: 0 0 8px var(--brand-primary); }
+    .dot-cyan { background: var(--brand-secondary); box-shadow: 0 0 8px var(--brand-secondary); }
+    .dot-amber { background: var(--brand-accent); box-shadow: 0 0 8px var(--brand-accent); }
+    .dot-green { background: var(--brand-green); box-shadow: 0 0 8px var(--brand-green); }
+    .dot-red { background: var(--brand-red); box-shadow: 0 0 8px var(--brand-red); }
+    .dot-purple { background: var(--brand-purple); box-shadow: 0 0 8px var(--brand-purple); }
+
+    .wide-rule-item strong { color: var(--text-primary); font-weight: 600; }
+
+    /* ── SCROLLBAR ── */
+    .slide::-webkit-scrollbar { width: 4px; }
+    .slide::-webkit-scrollbar-track { background: transparent; }
+    .slide::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+  </style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="top-bar">
+  <div class="brand">
+    <div class="brand-dot">🌐</div>
+    LingoChaps Operations
+  </div>
+  <div class="top-controls">
+    <span class="slide-counter" id="slideCounter">Slide 1 of 13</span>
+    <select class="voice-select" id="voiceSelect" onchange="changeVoice()" title="Select Voiceover Speaker"></select>
+    <button class="voiceover-btn" id="voBtn" onclick="toggleVoiceover()">
+      <div class="vo-wave">
+        <span></span><span></span><span></span><span></span><span></span>
+      </div>
+      Voiceover
+    </button>
+    <button class="fullscreen-btn" onclick="toggleFullscreen()" title="Fullscreen">⛶</button>
+  </div>
+</div>
+
+<!-- SLIDES -->
+<div class="slide-viewport" id="viewport">
+
+  <!-- SLIDE 0: COVER -->
+  <div class="slide active" id="slide-0">
+    <div class="slide-inner">
+      <div class="hero-layout">
+        <div>
+          <div class="module-badge badge-welcome">🌐 Day One Orientation</div>
+          <div class="slide-title">
+            Internal Team<br>
+            <span class="highlight">Onboarding Guide</span>
+          </div>
+          <p class="slide-subtitle">
+            Welcome to LingoChaps! This orientation covers document translation workflows, mandatory folder structures, Chrome profiles, and the core operational skills required for your role.
+          </p>
+          <div class="cover-tags">
+            <span class="cover-tag">📄 PDF & DOCX</span>
+            <span class="cover-tag">📁 Folder Setup</span>
+            <span class="cover-tag">⚡ Immediate Intake</span>
+            <span class="cover-tag">🔍 ABBYY OCR</span>
+            <span class="cover-tag">💬 Audio Comments</span>
+          </div>
+          <div class="cover-grid">
+            <div class="cover-stat">
+              <div class="stat-label">Core Modules</div>
+              <div class="stat-val">4</div>
+              <div class="stat-desc">Operational domains</div>
+            </div>
+            <div class="cover-stat">
+              <div class="stat-label">Orientation Duration</div>
+              <div class="stat-val">~25 min</div>
+              <div class="stat-desc">Interactive narration</div>
+            </div>
+          </div>
+        </div>
+        <div class="hero-visual">
+          <div class="hero-orb">
+            <div class="hero-center-text">
+              <span class="big-emoji">💼</span>
+              <p>Operations<br>Day One</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="module-progress" style="margin-top:2rem;">
+        <div class="prog-pill active"></div>
+        <div class="prog-pill"></div>
+        <div class="prog-pill"></div>
+        <div class="prog-pill"></div>
+        <div class="prog-pill"></div>
+        <div class="prog-pill"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 1: YOUR ROLE -->
+  <div class="slide" id="slide-1">
+    <div class="slide-inner">
+      <div class="module-badge badge-module1">Module 1 · Your Role</div>
+      <div class="slide-h2">You are the Project Conductor</div>
+      <p class="slide-subtitle">Your role is operational orchestration — making sure translation workflows run smoothly, on time, and at highest quality.</p>
+      <div class="card-grid cols-2">
+        <div class="info-card">
+          <div class="card-accent" style="background: var(--brand-primary);"></div>
+          <div class="card-icon">⚡</div>
+          <div class="card-title">Immediate Intake & Set up</div>
+          <div class="card-body">Configure workspace parameters, download source files, verify sizes, and distribute tasks immediately to translation channels.</div>
+        </div>
+        <div class="info-card">
+          <div class="card-accent" style="background: var(--brand-secondary);"></div>
+          <div class="card-icon">📁</div>
+          <div class="card-title">Structured File Organization</div>
+          <div class="card-body">Maintain the mandatory nested folder structures under Drive D. Never mix client codes, projects, or languages.</div>
+        </div>
+        <div class="info-card">
+          <div class="card-accent" style="background: var(--brand-accent);"></div>
+          <div class="card-icon">⚙️</div>
+          <div class="card-title">Core Skills Execution</div>
+          <div class="card-body">Execute split-screen checks, copy transcripts as plain text without template break, and run ABBYY OCR scans.</div>
+        </div>
+        <div class="info-card">
+          <div class="card-accent" style="background: var(--brand-green);"></div>
+          <div class="card-icon">🔍</div>
+          <div class="card-title">QC, Naming, & Delivery</div>
+          <div class="card-body">Review translations, match nomenclature against naming rules, insert comment tags, and deliver finalized files.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 2: Chrome Profile & Bookmarks (Step 0) -->
+  <div class="slide" id="slide-2">
+    <div class="slide-inner">
+      <div class="module-badge badge-module1">Step 0 · Workspace Setup</div>
+      <div class="slide-h2">Create a Dedicated Chrome Profile</div>
+      <p class="slide-subtitle">We keep client assets, templates, and spreadsheets completely isolated from personal accounts.</p>
+      <div class="two-col-layout">
+        <div>
+          <div class="wide-rule-list">
+            <div class="wide-rule-item">
+              <span class="dot dot-blue"></span>
+              <div><strong>Profile Name: "Lingo Chaps"</strong><br>Create a separate, dedicated Google Chrome profile on your workstation. Name it "Lingo Chaps".</div>
+            </div>
+            <div class="wide-rule-item">
+              <span class="dot dot-red"></span>
+              <div><strong>Zero-Leakage Rule</strong><br>Never open LingoChaps templates, sheets, or client folders in your personal profile. Use your dedicated profile permanently.</div>
+            </div>
+            <div class="wide-rule-item">
+              <span class="dot dot-cyan"></span>
+              <div><strong>Bookmark Tracker Folders</strong><br>Create folders on your Chrome Bookmark Bar: "Allocation Sheet", "Templates", and "Active Projects".</div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="wide-rule-list">
+            <div class="wide-rule-item">
+              <span class="dot dot-amber"></span>
+              <div><strong>Instant Template Access</strong><br>Save the Master Word Template and the daily allocation tracking sheet links in your bookmarks. Avoid searching chat logs.</div>
+            </div>
+            <div class="wide-rule-item">
+              <span class="dot dot-green"></span>
+              <div><strong>Shared Drive Setup</strong><br>Bookmark the LingoChaps shared Drive folder. Set it up so you can access date folders with one click.</div>
+            </div>
+          </div>
+          <div class="warn-box">
+            ⚠️ <strong>Security Priority:</strong> Mixing personal browsing session history with client deliverables is strictly prohibited. Keep profiles clean.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 3: Intake & Distribution (Step 1) -->
+  <div class="slide" id="slide-3">
+    <div class="slide-inner">
+      <div class="module-badge badge-module2">Step 1 · Intake</div>
+      <div class="slide-h2">Prerequisites & Immediate Intake</div>
+      <p class="slide-subtitle">Before starting work, configure Chrome settings for mandatory save prompts. These settings are non-negotiable.</p>
+      <div class="card-grid cols-2">
+        <div class="info-card">
+          <div class="card-accent" style="background: var(--brand-primary);"></div>
+          <div class="card-icon">⚙️</div>
+          <div class="card-title">Chrome Download Setting</div>
+          <div class="card-body">Go to Chrome settings and enable <strong>"Ask where to save each file before downloading"</strong>. Enable <strong>"Show downloads when complete"</strong> for immediate tray notification.</div>
+        </div>
+        <div class="info-card">
+          <div class="card-accent" style="background: var(--brand-accent);"></div>
+          <div class="card-icon">⚡</div>
+          <div class="card-title">Immediate Action Protocol</div>
+          <div class="card-body"><strong>"Distribute the task immediately while simultaneously securing data on Drive D."</strong> Outreach resources without delay to prevent time loss.</div>
+        </div>
+      </div>
+      <div class="warn-box" style="margin-top:1.5rem;">
+        <strong>Triple-Path Escalation Strategy:</strong> If a primary translator is unresponsive, follow these paths in parallel:
+        <br>1. <strong>Direct Contact:</strong> Call/ping your allocated translators.
+        <br>2. <strong>Upwork Post:</strong> Create a public hiring post to find active candidates.
+        <br>3. <strong>Offline Sync:</strong> Coordinate with team members for immediate coverage.
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 4: Folder Hierarchy (Step 2) -->
+  <div class="slide" id="slide-4">
+    <div class="slide-inner">
+      <div class="module-badge badge-module2">Step 2 · Folder Hierarchy</div>
+      <div class="slide-h2">Mandatory Folder Structure (Drive D)</div>
+      <p class="slide-subtitle">Save files inside your named workspace folder under local disk D using these exact paths.</p>
+      <div class="two-col-layout">
+        <div>
+          <div class="tree-box">
+            <div><i class="fas fa-desktop" style="color:var(--text-muted)"></i> Desktop</div>
+            <div class="tree-indent-1">↳ <i class="fas fa-hdd" style="color:var(--brand-secondary)"></i> Local Disk (D:)</div>
+            <div class="tree-indent-2">↳ 📁 Riya <span style="color:var(--text-muted)">(Your Name)</span></div>
+            <div class="tree-indent-3">↳ 📁 2026 <span style="color:var(--text-muted)">(Year)</span></div>
+            <div class="tree-indent-4">↳ 📁 British Council <span style="color:var(--text-muted)">(Client)</span></div>
+            <div class="tree-indent-5">↳ 📁 January / 02-05-2026</div>
+            <div class="tree-indent-5" style="margin-left:9rem;">↳ 📁 Hindi to English</div>
+          </div>
+          <div class="warn-box" style="margin-top:0.5rem; padding: 0.5rem 1rem;">
+            <strong>Group A Rule:</strong> Create separate language folders. Never mix languages in one directory.
+          </div>
+        </div>
+        <div>
+          <div class="tree-box">
+            <div><i class="fas fa-desktop" style="color:var(--text-muted)"></i> Desktop</div>
+            <div class="tree-indent-1">↳ <i class="fas fa-hdd" style="color:var(--brand-secondary)"></i> Local Disk (D:)</div>
+            <div class="tree-indent-2">↳ 📁 Riya <span style="color:var(--text-muted)">(Your Name)</span></div>
+            <div class="tree-indent-3">↳ 📁 2026 / 📁 Miscellaneous client</div>
+            <div class="tree-indent-4">↳ 📁 01-2026 <span style="color:var(--text-muted)">(Month)</span> / 01-01-2026</div>
+            <div class="tree-indent-5">↳ 📁 Hindi to English</div>
+            <div class="tree-indent-5" style="margin-left:9rem;">↳ 📁 xyz Gupta <span style="color:var(--text-muted)">(Client Name)</span></div>
+          </div>
+          <div class="warn-box" style="margin-top:0.5rem; padding: 0.5rem 1rem; border-left-color: var(--brand-secondary);">
+            <strong>Group B Rule:</strong> Create month-wise folders, then date, then language, then client folders.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 5: CORE SKILL 1: Split Screen -->
+  <div class="slide" id="slide-5">
+    <div class="slide-inner">
+      <div class="module-badge badge-module3">Core Skill 1 · Workspace Setup</div>
+      <div class="slide-h2">Split-Screen Configuration</div>
+      <p class="slide-subtitle">Tile windows side-by-side to review source assets alongside Google Docs translation templates.</p>
+      <div class="diagram-container" style="display: flex; gap: 10px; align-items: center; justify-content: center; background: rgba(0,0,0,0.3); padding: 1.5rem; border-radius: 12px; margin-bottom: 1.5rem; border: 1px solid var(--border);">
+        <div style="flex: 1.2; text-align: center; padding: 1rem; background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; font-weight: 700; font-size: 0.9rem;">Source Window (50%)<br><span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 400;">Reference Document / Audio / Video Scan</span></div>
+        <div style="font-size: 1.2rem; color: var(--text-muted);">↔</div>
+        <div style="flex: 1.2; text-align: center; padding: 1rem; background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; font-weight: 700; font-size: 0.9rem;">Google Doc Workspace (50%)<br><span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 400;">Translation Template / Output Docx</span></div>
+      </div>
+      <div class="card-grid cols-2">
+        <div class="info-card">
+          <div class="card-icon">🪟 Windows Shortcuts</div>
+          <div class="card-body" style="font-size:0.8rem;">
+            1. Select your Chrome source tab.
+            <br>2. Press <kbd class="kbd">Win</kbd> + <kbd class="kbd">←</kbd> to snap left 50%.
+            <br>3. Click the Google Doc window on the right list.
+          </div>
+        </div>
+        <div class="info-card">
+          <div class="card-icon">🍎 macOS Instructions</div>
+          <div class="card-body" style="font-size:0.8rem;">
+            1. Hover mouse pointer over the <strong>green full-screen icon</strong> (top-left).
+            <br>2. Click <strong>Tile Window to Left of Screen</strong>.
+            <br>3. Choose the Google Doc for the right tile.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 6: CORE SKILL 2: Copy-Paste & Spacing -->
+  <div class="slide" id="slide-6">
+    <div class="slide-inner">
+      <div class="module-badge badge-module3">Core Skill 2 · Document Spacing</div>
+      <div class="slide-h2">Copy-Pasting & Paragraph Rules</div>
+      <p class="slide-subtitle">Pasting text incorrectly will damage templates, break margins, and ruin font consistency.</p>
+      <div class="comparison">
+        <div class="comp-card wrong">
+          <div class="comp-label">❌ Unfiltered Paste (Ctrl+V)</div>
+          <div class="comp-content" style="font-size:0.75rem;">
+            - Pastes HTML background styles, font sizes, colors, and line spacing.
+            <br>- Damages Google Doc template styles.
+            <br>- Requires manual cleanup of every line.
+            <br>- Double Enter carriage returns create excessive, irregular gaps.
+          </div>
+        </div>
+        <div class="comp-card right">
+          <div class="comp-label">✅ Plain Text Paste (Ctrl+Shift+V)</div>
+          <div class="comp-content" style="font-size:0.75rem;">
+            - Use <strong>Ctrl + Shift + V</strong> (Windows) or <strong>Cmd + Shift + V</strong> (Mac).
+            <br>- Instantly adopts target template's fonts and style.
+            <br>- To add vertical space: Go to <strong>Format > Line & paragraph spacing > Add space after paragraph</strong>.
+            <br>- Neatly separate turns with exactly one blank line.
+          </div>
+        </div>
+      </div>
+      <div class="warn-box" style="margin-top:1rem;">
+        💡 <strong>Pro Tip:</strong> Never hit the Enter key twice to create paragraph spacing. Always use paragraph padding settings to keep the layout uniform.
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 7: CORE SKILL 3: Download & Upload -->
+  <div class="slide" id="slide-7">
+    <div class="slide-inner">
+      <div class="module-badge badge-module3">Core Skill 3 · Transfers</div>
+      <div class="slide-h2">Download & Cloud Upload Protocols</div>
+      <p class="slide-subtitle">Never download files directly onto the Desktop. Keep local storage organized to prevent mixing client files.</p>
+      <div class="card-grid cols-2">
+        <div class="info-card">
+          <div class="card-accent" style="background: var(--brand-primary);"></div>
+          <div class="card-title">📁 A. Local Download Pipeline</div>
+          <div class="card-body" style="font-size:0.75rem; line-height:1.6;">
+            1. Save all incoming client audio/video assets inside the local directory: <strong>D:\Videostowords\</strong>.
+            <br>2. Wait for download progress bar to finish.
+            <br>3. Check local file size against server size to verify the file is not corrupted or incomplete.
+          </div>
+        </div>
+        <div class="info-card">
+          <div class="card-accent" style="background: var(--brand-secondary);"></div>
+          <div class="card-title">☁️ B. Cloud Upload Pipeline</div>
+          <div class="card-body" style="font-size:0.75rem; line-height:1.6;">
+            1. Open LingoChaps shared Google Drive date/client directory.
+            <br>2. Drag files from <strong>D:\Videostowords\</strong> to the Drive folder.
+            <br>3. Right-click, select <strong>Share > Copy Link</strong>. Make it shareable.
+            <br>4. Paste the link directly in the Allocation Sheet tracker.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 8: CORE SKILL 4: Naming Conventions -->
+  <div class="slide" id="slide-8">
+    <div class="slide-inner">
+      <div class="module-badge badge-module3">Core Skill 4 · File Naming</div>
+      <div class="slide-h2">Standardized File Naming Rules</div>
+      <p class="slide-subtitle">A strict naming structure keeps files easily searchable and prevents translation version errors.</p>
+      <div class="warn-box" style="margin-top:0.5rem; background:rgba(79,70,229,0.08); border-color:var(--brand-primary); color: #a5b4fc;">
+        📁 <strong>Naming Rule Formula:</strong> All file names must strictly match the following convention:
+        <br><strong style="font-size:1rem; display:block; margin-top:5px; color:#fff;">(Language_StartTimestamp-EndTimestamp_VideoCode)</strong>
+      </div>
+      <table style="width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.75rem;">
+        <thead>
+          <tr style="background-color: rgba(255,255,255,0.05);">
+            <th style="padding: 0.6rem 0.8rem; border: 1px solid var(--border); text-align: left;">Language</th>
+            <th style="padding: 0.6rem 0.8rem; border: 1px solid var(--border); text-align: left;">Segment Timestamp</th>
+            <th style="padding: 0.6rem 0.8rem; border: 1px solid var(--border); text-align: left;">Video Code</th>
+            <th style="padding: 0.6rem 0.8rem; border: 1px solid var(--border); text-align: left;">Standard Output Name</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="padding: 0.6rem 0.8rem; border: 1px solid var(--border);">Arabic</td>
+            <td style="padding: 0.6rem 0.8rem; border: 1px solid var(--border);">00:00:00 to 00:00:25</td>
+            <td style="padding: 0.6rem 0.8rem; border: 1px solid var(--border);">fa231x</td>
+            <td style="padding: 0.6rem 0.8rem; border: 1px solid var(--border); color:#6ee7b7;">(Arabic_00:00:00-00:00:25_fa231x).mp4</td>
+          </tr>
+          <tr>
+            <td style="padding: 0.6rem 0.8rem; border: 1px solid var(--border);">Persian</td>
+            <td style="padding: 0.6rem 0.8rem; border: 1px solid var(--border);">00:02:15 to 00:05:30</td>
+            <td style="padding: 0.6rem 0.8rem; border: 1px solid var(--border);">yt883k</td>
+            <td style="padding: 0.6rem 0.8rem; border: 1px solid var(--border); color:#6ee7b7;">(Persian_00:02:15-00:05:30_yt883k).mp4</td>
+          </tr>
+          <tr>
+            <td style="padding: 0.6rem 0.8rem; border: 1px solid var(--border);">English</td>
+            <td style="padding: 0.6rem 0.8rem; border: 1px solid var(--border);">00:00:00 to 00:15:00</td>
+            <td style="padding: 0.6rem 0.8rem; border: 1px solid var(--border);">tr920m</td>
+            <td style="padding: 0.6rem 0.8rem; border: 1px solid var(--border); color:#6ee7b7;">(English_00:00:00-00:15:00_tr920m).mp3</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="error-box" style="margin-top:0.5rem;">
+        <div class="err-icon">❌</div>
+        <div>
+          <strong>Prohibited File Names:</strong>
+          <p>Generic names like <code>trim_video.mp4</code>, <code>output_fa.mp4</code>, or <code>Persian_4mins.mp4</code> will be rejected by reviewers.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 9: CORE SKILL 5: ABBYY FineReader OCR -->
+  <div class="slide" id="slide-9">
+    <div class="slide-inner">
+      <div class="module-badge badge-module3">Core Skill 5 · OCR Scan</div>
+      <div class="slide-h2">ABBYY FineReader OCR Conversion</div>
+      <p class="slide-subtitle">Used to convert scanned PDFs or static screenshots into digital, selectable layouts for translations.</p>
+      <div class="card-grid cols-2">
+        <div class="info-card">
+          <div class="card-title">🔍 What is ABBYY FineReader?</div>
+          <div class="card-body">It is Optical Character Recognition software. It reads text layout structures inside scans, PDFs, or image captures, converting them into editable documents (like Microsoft Word or Excel).</div>
+        </div>
+        <div class="info-card">
+          <div class="card-title">📝 OCR Step-by-Step SOP</div>
+          <div class="card-body" style="font-size:0.75rem;">
+            1. Launch ABBYY FineReader.
+            <br>2. Click <strong>Open PDF/Image Document</strong>.
+            <br>3. Set document language (Arabic, Persian, etc.) in options.
+            <br>4. Click <strong>Recognize</strong> to extract layout.
+            <br>5. Copy and paste as plain text into Google Doc.
+          </div>
+        </div>
+      </div>
+      <div class="warn-box" style="margin-top:1rem;">
+        ⚠️ <strong>Verification Rule (Critical):</strong> ABBYY will highlight characters with low-confidence recognition in blue or red. Review these specific highlighted blocks side-by-side against original images and correct character reading errors manually.
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 10: CORE SKILL 6: Audio Comments -->
+  <div class="slide" id="slide-10">
+    <div class="slide-inner">
+      <div class="module-badge badge-module3">Core Skill 6 · Audio Comments</div>
+      <div class="slide-h2">Audio Listening & Google Doc Comments</div>
+      <p class="slide-subtitle">Standard operations for handling complex, dialect-heavy speech segments and unverified words.</p>
+      <div class="two-col-layout">
+        <div>
+          <div class="wide-rule-list">
+            <div class="wide-rule-item">
+              <span class="dot dot-blue"></span>
+              <div><strong>Wear Headphones</strong><br>Always use over-ear headphones when transcribing or reviewing audio tasks. Avoid open speakers.</div>
+            </div>
+            <div class="wide-rule-item">
+              <span class="dot dot-amber"></span>
+              <div><strong>Slow Down Playback</strong><br>If speaker dialect is fast, slow playback speed to <strong>0.75x</strong> or <strong>0.8x</strong> in your media player.</div>
+            </div>
+            <div class="wide-rule-item">
+              <span class="dot dot-green"></span>
+              <div><strong>The Three-Times Rule</strong><br>Play difficult audio segments at least <strong>three times</strong> at different volumes/speeds before tagging it.</div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="wide-rule-list">
+            <div class="wide-rule-item">
+              <span class="dot dot-purple"></span>
+              <div><strong>Google Doc Comment Tags</strong><br>Use <kbd class="kbd">Ctrl</kbd>+<kbd class="kbd">Alt</kbd>+<kbd class="kbd">M</kbd> to insert tags. Format comments using these standard tags:</div>
+            </div>
+            <div class="wide-rule-item" style="font-size:0.75rem;">
+              • <code>[UNCLEAR @ MM:SS]</code> - muffled speech or overlapping dialogue.
+              <br>• <code>[TERM QUERY]</code> - jargon queries requiring client check.
+              <br>• <code>[PROPER NOUN]</code> - unverified phonetic spelling of names/places.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 11: TERMINOLOGY GLOSSARY -->
+  <div class="slide" id="slide-11">
+    <div class="slide-inner">
+      <div class="module-badge badge-module4">Module 4 · Operations Glossary</div>
+      <div class="slide-h2">Key Operations Terms Glossary</div>
+      <p class="slide-subtitle">Terminology used in daily document and project file management.</p>
+      <div class="glossary-grid">
+        <div class="gloss-item">
+          <div class="gloss-tag tag-file">File</div>
+          <div class="gloss-term">PDF & DOCX</div>
+          <div class="gloss-def">Portable Document Format (static) and Word Document (editable). We convert static PDFs to DOCX templates to translate while maintaining layout style.</div>
+        </div>
+        <div class="gloss-item">
+          <div class="gloss-tag tag-process">Process</div>
+          <div class="gloss-term">OCR (Optical Character Recognition)</div>
+          <div class="gloss-def">Running software like ABBYY to read and extract textual layout blocks from scanned documents.</div>
+        </div>
+        <div class="gloss-item">
+          <div class="gloss-tag tag-process">Process</div>
+          <div class="gloss-term">DTP (Desktop Publishing)</div>
+          <div class="gloss-def">Placing translated texts back into original design layouts (Illustrator/Photoshop) to align fonts and formats.</div>
+        </div>
+        <div class="gloss-item">
+          <div class="gloss-tag tag-tool">Tool</div>
+          <div class="gloss-term">TM (Translation Memory)</div>
+          <div class="gloss-def">A database tool storing previously approved translations to speed up recurring phrase checks.</div>
+        </div>
+        <div class="gloss-item">
+          <div class="gloss-tag tag-tool">Tool</div>
+          <div class="gloss-term">Aura</div>
+          <div class="gloss-def">LingoChaps' in-house platform at lingochaps.com for handling translation pipelines and AI workflows.</div>
+        </div>
+        <div class="gloss-item">
+          <div class="gloss-tag tag-quality">Quality</div>
+          <div class="gloss-term">Track Changes</div>
+          <div class="gloss-def">Word/Doc mode to show edits visually so translators see spelling and phrasing corrections clearly.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 12: ORIENTATION CHECKLIST -->
+  <div class="slide" id="slide-12">
+    <div class="slide-inner">
+      <div class="module-badge badge-summary">✅ Summary</div>
+      <div class="slide-h2">Operations Summary Checklist</div>
+      <p class="slide-subtitle">Complete these day-one prerequisites and keep standard workflows in mind for every project.</p>
+      <div class="summary-grid">
+        <div class="sum-card">
+          <div class="sum-emoji">💻</div>
+          <div class="sum-title">Chrome Profile</div>
+          <div class="sum-desc">Create dedicated Chrome profile "Lingo Chaps" and bookmark tracker bar folders.</div>
+        </div>
+        <div class="sum-card">
+          <div class="sum-emoji">⚙️</div>
+          <div class="sum-title">Chrome Settings</div>
+          <div class="sum-desc">Turn on save location prompts. Never download to Desktop; use Drive D.</div>
+        </div>
+        <div class="sum-card">
+          <div class="sum-emoji">📂</div>
+          <div class="sum-title">Folder Hierarchy</div>
+          <div class="sum-desc">Use nested folders (Riya/Year/Client/Month/Date/Language) for raw files.</div>
+        </div>
+        <div class="sum-card">
+          <div class="sum-emoji">📋</div>
+          <div class="sum-title">Formatting</div>
+          <div class="sum-desc">Always use Ctrl+Shift+V for plain text paste. Add space after paragraphs.</div>
+        </div>
+        <div class="sum-card">
+          <div class="sum-emoji">🏷️</div>
+          <div class="sum-title">Naming Conv</div>
+          <div class="sum-desc">Format file names: (Language_Start-End_VideoCode).mp4 strictly.</div>
+        </div>
+        <div class="sum-card">
+          <div class="sum-emoji">🗣️</div>
+          <div class="sum-title">OCR & Comments</div>
+          <div class="sum-desc">Use ABBYY FineReader for scans. Use [UNCLEAR @ MM:SS] Google Doc tags.</div>
+        </div>
+      </div>
+      <div class="warn-box" style="text-align:center; margin-top:1.5rem; background: rgba(79,70,229,0.08); border-color: rgba(79,70,229,0.3); border-left-color: var(--brand-primary); color: #a5b4fc;">
+        🎉 Welcome to the LingoChaps Operations Team!
+        <br>If in doubt, ask your project associate early. Never assume or guess.
+        <br><span style="font-size:0.7rem; opacity:0.7; margin-top:4px; display:block;">LingoChaps · Internal Team Onboarding · v1.0</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- SPEAKING BAR -->
+<div class="speaking-bar" id="speakingBar">
+  <div class="speak-waves">
+    <span></span><span></span><span></span><span></span><span></span>
+  </div>
+  <div class="speak-text" id="speakText">Playing voiceover...</div>
+</div>
+
+<!-- BOTTOM NAV -->
+<div class="bottom-nav">
+  <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>← Previous</button>
+  <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
+    <div class="pips" id="pips"></div>
+    <div class="key-hint">
+      <kbd class="kbd">←</kbd> <kbd class="kbd">→</kbd> arrow keys · <kbd class="kbd">Space</kbd> next · <kbd class="kbd">F</kbd> fullscreen · <kbd class="kbd">V</kbd> voiceover
+    </div>
+  </div>
+  <button class="nav-btn primary" id="nextBtn" onclick="go(1)">Next →</button>
+</div>
+
+<script>
+  // ── SLIDE DATA ──
+  const TOTAL = 13;
+  let cur = 0;
+  let voiceoverOn = false;
+  let currentUtterance = null;
+
+  // Voiceover scripts for each slide in natural Indian English style
+  const voiceoverScripts = [
+    "Welcome to the LingoChaps Internal Team Orientation! Today, we are going to walk you through the day-one settings, our workflow from intake to final delivery, folders, and core skills you need on your workstation. This orientation will take about twenty-five minutes with active narration. Use the arrows or your keyboard to navigate slides. Let's begin.",
+
+    "Let's look at your role as a project conductor. Remember, you are not translating the documents yourself. Instead, you coordinate the translation pipelines, recruit translators on Upwork, monitor deadlines, perform folder structures and split screen QC reviews, and deliver final formatted DOCX documents back to clients. You ensure quality, timing, and operational success at every phase.",
+
+    "Step zero is configuring your web browser environment. You must create a dedicated Chrome browser profile named 'Lingo Chaps'. This isolates work trackers, template directories, and shared folders from your personal accounts. Next, set up Chrome bookmarks for instant access. Create folders named Allocation Sheet, Templates, and Active Projects. Never search chat histories for documents — keep them pinned.",
+
+    "Step one is file intake and immediate action protocols. Go to your browser settings and enable 'Ask where to save each file before downloading' and completes downloads tray alerts. This is a non-negotiable step to prevent file mess. When a task arrives, you must distribute the job to translators immediately while securing the raw data on Drive D. If your primary translator is offline, use the triple-path escalation system: ping them directly, publish a hiring post on Upwork, and sync with other team members in parallel.",
+
+    "Step two is folder hierarchy. When Chrome prompts you for a download directory, navigate to local disk D. Open your named workspace folder, for example, Riya, and structure folders like this. For Group A regular clients, create folders by year, client name, month, date, and separate language folders. Never mix languages in one directory. For Group B miscellaneous clients, create year, miscellaneous folder, month-wise folders, date folders, language folders, and finally folders named after individual walk-in clients.",
+
+    "Let's cover core skill one: split screen configuration. Tiling your windows side by side prevents you from clicking back and forth between document tabs. On Windows, press the Windows key and left arrow key to snap your Chrome source window to the left. Select Google Doc for the right tile. On Mac, hover over the green window button and select Tile Window to Left of Screen. For smaller screens, use a sixty-forty layout favoring the Google Doc.",
+
+    "Core skill two is copy-pasting and document spacing rules. Never paste text using normal Ctrl V, as this copies background formats, colors, and line widths, ruining our templates. Always paste plain text without formatting using Ctrl Shift V on Windows or Command Shift V on Mac. Also, do not hit the Enter key twice to insert whitespace carriage returns. Instead, go to Format, paragraph spacing, and choose Add space after paragraph to maintain spacing, and separate speaker turns with exactly one blank line.",
+
+    "Core skill three is download and cloud uploading. Never save incoming client audio or video files onto your Desktop. Always direct downloads to local disk D under Videostowords folder. Compare file sizes against server parameters to confirm completeness. For uploads, drag files from your local storage to the shared Drive folder. Right-click, copy the shareable link, and paste it directly into the Allocation Sheet tracker.",
+
+    "Core skill four is standardized naming conventions. Every file name must follow our formula: parenthesis, language name, underscore, start timestamp dash end timestamp, underscore, video code, parenthesis. For example, Arabic zero zero zero zero zero zero to zero zero zero zero twenty-five underscore video code, dot mp4. Generic titles like trim video or output file are strictly prohibited.",
+
+    "Core skill five is running Optical Character Recognition with ABBYY FineReader. This software is used to convert scanned, image-based PDFs or screenshot documents into selectable, editable text. Open your PDF file in ABBYY, select the document language, and click Recognize. During verification, review low-confidence words highlighted in blue or red side-by-side with the original image, and correct character reading errors manually before exporting.",
+
+    "Core skill six is audio listening and document comments. Always wear over-ear headphones when transcribing or checking translation accuracy. Slow down speech playback to zero point seventy-five or zero point eight if needed, and apply the three-times rule for unclear parts. If spellings are unverified, insert comment tags using Ctrl Alt M: use unclear tag with timestamp for muffled audio, term query for technical terms, and proper noun for phonetic spelling checks.",
+
+    "Let's review the operations glossary. You will frequently work with PDF and DOCX file layouts, run OCR scans, and hand off vector graphics to the DTP team. You will use Translation Memories and our translation platform, Aura. As a Language Service Provider, we measure job size by word count, and reviewers must always use Track Changes in Microsoft Word so translators see corrections clearly.",
+
+    "Let's summarize your day-one checklist. Ensure your Chrome profile is set up, download settings are configured to prompt folder pathways, local disk D folder structures are active, and copy-paste rules are followed. When reviewing documents, verify naming conventions, run OCR checks, and format comments with standardized tags. Welcome to LingoChaps! Let's get to work."
+  ];
+
+  // ── PIPS ──
+  function buildPips() {
+    const pipsEl = document.getElementById('pips');
+    pipsEl.innerHTML = '';
+    for (let i = 0; i < TOTAL; i++) {
+      const p = document.createElement('div');
+      p.className = 'pip' + (i === cur ? ' on' : '');
+      p.onclick = () => goTo(i);
+      pipsEl.appendChild(p);
+    }
+  }
+
+  // ── NAVIGATION ──
+  function go(dir) { goTo(cur + dir); }
+
+  function goTo(idx) {
+    if (idx < 0 || idx >= TOTAL) return;
+    const slides = document.querySelectorAll('.slide');
+
+    slides[cur].classList.remove('active');
+    slides[cur].classList.add('exit-left');
+    setTimeout(() => {
+      if (slides[cur]) slides[cur].classList.remove('exit-left');
+    }, 500);
+
+    cur = idx;
+    slides.forEach((s, i) => {
+      s.classList.remove('active', 'exit-left');
+    });
+    slides[cur].classList.add('active');
+
+    document.getElementById('prevBtn').disabled = cur === 0;
+    document.getElementById('nextBtn').disabled = cur === TOTAL - 1;
+    document.getElementById('slideCounter').textContent = `Slide ${cur + 1} of ${TOTAL}`;
+    buildPips();
+
+    // Voiceover
+    if (voiceoverOn) {
+      stopSpeaking();
+      setTimeout(() => speak(cur), 400);
+    }
+  }
+
+  // ── VOICEOVER ──
+  function toggleVoiceover() {
+    voiceoverOn = !voiceoverOn;
+    const btn = document.getElementById('voBtn');
+    if (voiceoverOn) {
+      btn.classList.add('active');
+      speak(cur);
+    } else {
+      btn.classList.remove('active');
+      stopSpeaking();
+    }
+  }
+
+  function speak(slideIdx) {
+    if (!window.speechSynthesis) return;
+    stopSpeaking();
+
+    const text = voiceoverScripts[slideIdx] || '';
+    if (!text) return;
+
+    currentUtterance = new SpeechSynthesisUtterance(text);
+    currentUtterance.rate = 0.90;
+    currentUtterance.pitch = 1.0;
+    currentUtterance.volume = 1.0;
+
+    const voices = speechSynthesis.getVoices();
+    let preferred = null;
+    if (selectedVoiceName) {
+      preferred = voices.find(v => v.name === selectedVoiceName);
+    }
+    if (!preferred) {
+      // Prioritize Indian English voices
+      preferred = voices.find(v => 
+        (v.lang.toLowerCase().includes('en-in') || 
+         v.name.toLowerCase().includes('india') || 
+         v.name.toLowerCase().includes('rishi') || 
+         v.name.toLowerCase().includes('heera') || 
+         v.name.toLowerCase().includes('veena') || 
+         v.name.toLowerCase().includes('neerja')) && 
+        v.lang.startsWith('en')
+      );
+    }
+    if (!preferred) {
+      preferred = voices.find(v =>
+        (v.name.includes('Samantha') || v.name.includes('Google US') || v.name.includes('Karen') ||
+         v.name.includes('Daniel') || v.name.includes('Alex')) && v.lang.startsWith('en')
+      ) || voices.find(v => v.lang.startsWith('en')) || voices[0];
+    }
+
+    if (preferred) {
+      currentUtterance.voice = preferred;
+      currentUtterance.lang = preferred.lang;
+    } else {
+      currentUtterance.lang = 'en-IN';
+    }
+
+    currentUtterance.onstart = () => {
+      const bar = document.getElementById('speakingBar');
+      document.getElementById('speakText').textContent = voiceoverScripts[slideIdx].slice(0, 60) + '…';
+      bar.classList.add('visible');
+    };
+
+    currentUtterance.onend = () => {
+      document.getElementById('speakingBar').classList.remove('visible');
+    };
+
+    currentUtterance.onerror = () => {
+      document.getElementById('speakingBar').classList.remove('visible');
+    };
+
+    window.speechSynthesis.speak(currentUtterance);
+  }
+
+  function stopSpeaking() {
+    if (window.speechSynthesis) window.speechSynthesis.cancel();
+    document.getElementById('speakingBar').classList.remove('visible');
+  }
+
+  // ── VOICE SELECTOR ──
+  let selectedVoiceName = '';
+
+  function loadVoices() {
+    if (!window.speechSynthesis) return;
+    const voices = speechSynthesis.getVoices();
+    const select = document.getElementById('voiceSelect');
+    if (!select) return;
+    select.innerHTML = '';
+
+    // Filter to English voices
+    const enVoices = voices.filter(v => v.lang.toLowerCase().startsWith('en'));
+
+    // Sort: Indian English voices first, then others
+    enVoices.sort((a, b) => {
+      const aIn = a.lang.toLowerCase().includes('en-in') || a.name.toLowerCase().includes('india') || a.name.toLowerCase().includes('rishi') || a.name.toLowerCase().includes('veena') || a.name.toLowerCase().includes('heera') || a.name.toLowerCase().includes('neerja');
+      const bIn = b.lang.toLowerCase().includes('en-in') || b.name.toLowerCase().includes('india') || b.name.toLowerCase().includes('rishi') || b.name.toLowerCase().includes('veena') || b.name.toLowerCase().includes('heera') || b.name.toLowerCase().includes('neerja');
+      if (aIn && !bIn) return -1;
+      if (!aIn && bIn) return 1;
+      return a.name.localeCompare(b.name);
+    });
+
+    enVoices.forEach(v => {
+      const opt = document.createElement('option');
+      opt.value = v.name;
+      
+      let flag = '🌐';
+      const nameLower = v.name.toLowerCase();
+      const langLower = v.lang.toLowerCase();
+      if (langLower.includes('en-in') || nameLower.includes('india') || nameLower.includes('rishi') || nameLower.includes('veena') || nameLower.includes('neerja')) {
+        flag = '🇮🇳';
+      } else if (langLower.includes('en-us') || nameLower.includes('samantha') || nameLower.includes('google us')) {
+        flag = '🇺🇸';
+      } else if (langLower.includes('en-gb') || nameLower.includes('daniel') || nameLower.includes('karen')) {
+        flag = '🇬🇧';
+      } else if (langLower.includes('en-au')) {
+        flag = '🇦🇺';
+      }
+
+      opt.textContent = `${flag} ${v.name} (${v.lang})`;
+      select.appendChild(opt);
+    });
+
+    // Auto-select the best voice if none is set
+    if (!selectedVoiceName && enVoices.length > 0) {
+      const indVoice = enVoices.find(v => 
+        (v.lang.toLowerCase().includes('en-in') || 
+         v.name.toLowerCase().includes('india') || 
+         v.name.toLowerCase().includes('rishi') || 
+         v.name.toLowerCase().includes('heera') || 
+         v.name.toLowerCase().includes('veena') || 
+         v.name.toLowerCase().includes('neerja'))
+      );
+      if (indVoice) {
+        selectedVoiceName = indVoice.name;
+      } else {
+        const normalDefault = enVoices.find(v =>
+          v.name.includes('Samantha') || v.name.includes('Google US') || v.name.includes('Karen') ||
+          v.name.includes('Daniel') || v.name.includes('Alex')
+        ) || enVoices[0];
+        selectedVoiceName = normalDefault ? normalDefault.name : '';
+      }
+    }
+
+    if (selectedVoiceName) {
+      select.value = selectedVoiceName;
+    }
+  }
+
+  function changeVoice() {
+    const select = document.getElementById('voiceSelect');
+    if (select) {
+      selectedVoiceName = select.value;
+      if (voiceoverOn) {
+        stopSpeaking();
+        speak(cur);
+      }
+    }
+  }
+
+  // ── FULLSCREEN ──
+  function toggleFullscreen() {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen();
+    } else {
+      document.exitFullscreen();
+    }
+  }
+
+  // ── KEYBOARD ──
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); go(1); }
+    if (e.key === 'ArrowLeft') { e.preventDefault(); go(-1); }
+    if (e.key === 'f' || e.key === 'F') toggleFullscreen();
+    if (e.key === 'v' || e.key === 'V') toggleVoiceover();
+    if (e.key === 'Escape') stopSpeaking();
+  });
+
+  // ── TOUCH SWIPE ──
+  let touchStartX = 0;
+  document.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, {passive: true});
+  document.addEventListener('touchend', e => {
+    const diff = touchStartX - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 60) go(diff > 0 ? 1 : -1);
+  }, {passive: true});
+
+  // Load voices async
+  if (window.speechSynthesis) {
+    speechSynthesis.onvoiceschanged = loadVoices;
+    loadVoices();
+  }
+
+  // ── INIT ──
+  buildPips();
+  document.getElementById('slideCounter').textContent = `Slide 1 of ${TOTAL}`;
+</script>
+</body>
+</html>
