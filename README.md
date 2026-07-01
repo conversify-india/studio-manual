@@ -19,10 +19,11 @@ An interactive training manual and simulation workspace has been successfully cr
 - Simulates entering a client link and retrieving details.
 - Provides a recommended **MP4 720p** option, which triggers a download progress handler when clicked, saving a simulated local asset (`Persian_Tutorial_Session.mp4`).
 
-### 3. Video Cutter Simulator (`online-video-cutter.com`)
-- Prompts user to select the downloaded asset to load the workspace.
-- Features standard timeline handles and input fields for Start and End values (presets default to **00:00** and **04:00**).
-- Trims the file into `Persian_Tutorial_Session_Trimmed.mp4` when clicking **Save**.
+### 3. Video Trimmer Simulator (Desktop App)
+- Prompts user to open/load the downloaded asset.
+- Features controls to specify trim ranges (Set Start/End) and add them to a trim list.
+- Features auto-split generate options (Into parts, or every interval) to automatically split files.
+- Simulates rendering and exporting segments into `Persian_Tutorial_Session_Trimmed.mp4` when clicking **Trim All**.
 
 ### 4. High-Fidelity Lingochaps Tool Workspace Clone
 - Replicates the exact style and options of the internal portal shown in the user screenshots.

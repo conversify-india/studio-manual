@@ -85,116 +85,142 @@ const stepsContent = [
         title: "Welcome to LingoChaps Operations Manual",
         html: `
             <h3>Overview of the Workflow</h3>
-            <p>Welcome! This interactive manual guides you through our translation prep workflow. We process audio and video files for translation and captioning.</p>
-            <p>In this training, you will simulate a standard order request where we extract specific translation reports from a client's video.</p>
+            <p>Welcome! This training manual will teach you how to prepare and translate video and audio files using the <b>Video Trimmer</b> and the <b>LingoChaps Transcription Tool</b>.</p>
             
             <div class="alert alert-info">
-                <strong>Workflow Pipeline:</strong><br>
-                1. <strong>Download</strong> the client's YouTube link.<br>
-                2. <strong>Trim</strong> the video to the specific timestamps.<br>
-                3. <strong>Upload & Run</strong> transcription via the LingoChaps Internal Tool.
+                <strong>Important Note:</strong><br>
+                The LingoChaps Transcription Tool is our AI tool used to transcribe and translate files. However, we must always **trim** our video or audio files **first** using the **Video Trimmer** before uploading them to the LingoChaps Transcription Tool. This makes uploads faster and keeps reports clean!
             </div>
 
-            <p>On the right side of the screen is your <strong>Sandbox Simulator</strong>. It replicates the exact tools and portals you will use in production.</p>
-            <p>Click <strong>Continue</strong> below to begin step 1.</p>
+            <div class="alert alert-info">
+                <strong>Workflow Pipeline:</strong><br>
+                1. <strong>Download</strong> the client's video from YouTube.<br>
+                2. <strong>Trim</strong> the file so it only has the parts we need.<br>
+                3. <strong>Upload & Transcribe</strong> the trimmed file in the LingoChaps Transcription Tool.
+            </div>
+
+            <p>On the right side of the screen is your <b>Sandbox Simulator</b>. You can use it to practice with the actual tools we use in our work.</p>
+            <p>Click <b>Continue</b> below to start Step 1.</p>
         `
     },
     // Step 1: ssyou.online Youtube Downloader
     {
         title: "1. Download Video (ssyou.online)",
         html: `
-            <h3>Downloading Video Assets</h3>
-            <p>Clients frequently send orders with YouTube links rather than raw video files. Before transcribing, we must acquire the file.</p>
+            <h3>Downloading Client Videos</h3>
+            <p>Clients often send us YouTube links instead of video files. We must download the video file before we can work on it.</p>
             
             <div class="alert alert-warning">
-                <strong>Reference Link:</strong> Use <a href="https://ssyou.online/en1401Yd/" target="_blank" style="color: #fef3c7; text-decoration: underline;">ssyou.online/en1401Yd/</a> to download client assets. Do not use unverified third-party converters.
+                <strong>Website to use:</strong> Use <a href="https://ssyou.online/en1401Yd/" target="_blank" style="color: #fef3c7; text-decoration: underline;">ssyou.online/en1401Yd/</a> to download videos. Do not use other websites.
             </div>
 
             <h4>Instructions:</h4>
             <ol>
-                <li>Copy the client-supplied YouTube link (e.g. <code>https://www.youtube.com/watch?v=prsh16m</code>).</li>
-                <li>Paste the link into the URL bar of <strong>ssyou.online</strong> on the right.</li>
-                <li>Click <strong>Fetch</strong> to load video download options.</li>
-                <li>Select the recommended <strong>720p or 1080p MP4 format</strong> option and click <strong>Download</strong>.</li>
+                <li>Copy the client's YouTube link (for example: <code>https://www.youtube.com/watch?v=prsh16m</code>).</li>
+                <li>Paste the link into the URL box of the ssyou.online website on the right.</li>
+                <li>Click <strong>Fetch Options</strong> to load the video sizes.</li>
+                <li>Find the <strong>MP4 720p (Recommended)</strong> option and click <strong>Download</strong>.</li>
             </ol>
 
             <div class="alert alert-tip">
-                <strong>Simulated Task:</strong> In the Sandbox on the right, click <strong>"Fill Sample URL"</strong> then click <strong>"Fetch Options"</strong>. Next, click the green <strong>"Download"</strong> button for the 720p version.
+                <strong>Simulated Task:</strong> In the Sandbox on the right, click the <strong>"Fill Sample Client URL"</strong> button. Then click <strong>"Fetch Options"</strong>. Finally, click the green <strong>"Download"</strong> button for the 720p version.
             </div>
         `
     },
-    // Step 2: online-video-cutter.com
+    // Step 2: Video Trimmer
     {
-        title: "2. Trim to Specific Timestamp",
+        title: "2. Trim File",
         html: `
-            <h3>Trimming Video Segments</h3>
-            <p>Rarely do we need to translate a full 2-hour recording. Clients usually order translations for a specific duration or scene (e.g. "Minutes 0:00 to 4:00").</p>
+            <h3>Stage 01: Video Trimmer (Local Preparation)</h3>
+            <p>Start by trimming your video or audio file on your computer using the Video Trimmer tool.</p>
             
-            <div class="alert alert-warning">
-                <strong>Reference Link:</strong> Navigate to <a href="https://online-video-cutter.com/" target="_blank" style="color: #fef3c7; text-decoration: underline;">online-video-cutter.com</a> to crop, cut, or rotate video files easily without complex tools.
-            </div>
-
             <h4>Instructions:</h4>
             <ol>
-                <li>Open the Online Video Cutter tool.</li>
-                <li>Upload the video file downloaded in Step 1 (<code>Persian_Tutorial_Session.mp4</code>).</li>
-                <li>Input the precise start and end times requested by the client (e.g. Start: <strong>00:00</strong>, End: <strong>04:00</strong>).</li>
-                <li>Click <strong>Save</strong> to trim the file. Once processed, save the resulting file to your local computer.</li>
+                <li>
+                    <strong>Open the source file</strong><br>
+                    Click the <strong>Open Video</strong> button and choose your file from your computer. We support both video and audio files. Toggle the <strong>Video / Audio only</strong> switch at the top to match your file type.
+                    <span class="hint brand" style="display:block; margin: 4px 0;"><i class="fas fa-info-circle"></i> Formats: MP4, MKV, MOV, MP3, M4A, AMR, WAV, etc.</span>
+                </li>
+                <li style="margin-top: 10px;">
+                    <strong>Mark the range you need</strong><br>
+                    Drag the slider to find where your clip starts and ends. Click <strong>Set Start</strong> and <strong>Set End</strong>. Then click <strong>Add to List</strong> to put it in the queue. You can repeat this to cut multiple clips from the same file.
+                </li>
+                <li style="margin-top: 10px;">
+                    <strong>Or use Auto-split instead</strong><br>
+                    If you want to split the file into equal parts, use the Auto-split section. Type a number in <strong>Into ___ parts</strong> and click <strong>Generate</strong>. Or set a time length under <strong>Every ___ h ___ m ___ s</strong> and click <strong>Generate</strong>. This is the fastest way to break a long recording into smaller pieces.
+                    <div style="font-size:0.75rem; color:var(--text-muted); margin-top:4px;">&bull; Practical Example: Equal Splits</div>
+                </li>
+                <li style="margin-top: 10px;">
+                    <strong>Pick a save folder</strong><br>
+                    Click <strong>Choose...</strong> next to Save folder to pick where you want to save the trimmed files. It defaults to a folder named <code>trimmed video</code> in your Downloads folder.
+                </li>
+                <li style="margin-top: 10px;">
+                    <strong>Convert to MP3 if you only need audio</strong><br>
+                    Tick the <strong>Convert to MP3</strong> box before exporting if you don't need the video. This keeps the file size small for the next stage.
+                    <span class="hint good" style="display:block; margin: 4px 0;"><i class="fas fa-check-circle"></i> Recommended for call recordings like AMR/MP3 files</span>
+                </li>
+                <li style="margin-top: 10px;">
+                    <strong>Export</strong><br>
+                    Click <strong>Trim All</strong> to render all the clips in your list. Then click <strong>Download</strong> or <strong>Open Folder</strong> to get your finished files. These are the files you will upload in Stage 02.
+                </li>
             </ol>
 
             <div class="alert alert-tip">
-                <strong>Simulated Task:</strong> In the sandbox, drag the timeline slider or input <strong>00:00</strong> to <strong>04:00</strong>. Then click the blue <strong>"Cut & Save"</strong> button.
+                <strong>Simulated Task:</strong> In the sandbox simulator on the right:
+                1. Click the open zone or the "Open Video" button to load the video.
+                2. Click "Set Start" and "Set End", then click "Add to List".
+                3. Click the green "Trim All" button to export.
             </div>
         `
     },
-    // Step 3: LingoChaps Tool Upload
+    // Step 3: Submit to LingoChaps Transcription Tool
     {
-        title: "3. Submit to LingoChaps Tool",
+        title: "3. Upload to LingoChaps Transcription Tool",
         html: `
-            <h3>Processing Video in LingoChaps</h3>
-            <p>Now that the clip is trimmed, we upload it to our internal tool at <code>studio.lingochaps.com</code> to run transcription, translation, and text extraction.</p>
+            <h3>Uploading to LingoChaps Transcription Tool</h3>
+            <p>Now that your clip is trimmed, upload it to the LingoChaps Transcription Tool at <code>studio.lingochaps.com</code> to transcribe and translate it.</p>
             
-            <h4>Configuration Instructions:</h4>
+            <h4>Instructions:</h4>
             <ol>
-                <li>Drag and drop the trimmed file (<code>Persian_Tutorial_Session_Trimmed.mp4</code>) into the upload area.</li>
-                <li>Configure the options based on the client order sheet:
+                <li>Click the upload box on the right and select the trimmed file (<code>Persian_Tutorial_Session_Trimmed.mp4</code>).</li>
+                <li>Configure the settings:
                     <ul>
-                        <li><strong>Languages:</strong> Set to <code>auto-detect</code> (or insert hints like "fa, en").</li>
-                        <li><strong>Output Options:</strong> Choose from the 3 processing modes:
-                            <br>&bull; <em>Full:</em> Speech transcript + OCR screen text.
-                            <br>&bull; <em>Transcript only:</em> Audio narration transcription only.
-                            <br>&bull; <em>On-screen text only:</em> Video frame text extraction only.
+                        <li><strong>Languages:</strong> Keep as <code>auto-detect</code> (or type specific languages like "fa, en").</li>
+                        <li><strong>Output options:</strong> Choose what the client wants:
+                            <br>&bull; <em>Full:</em> Speech translation + on-screen text.
+                            <br>&bull; <em>Transcript only:</em> Audio transcription and translation only (faster).
+                            <br>&bull; <em>On-screen text only:</em> Video screen text only.
                         </li>
                     </ul>
                 </li>
-                <li>Click the purple <strong>Start transcription</strong> button to launch the task.</li>
+                <li>Click the purple <strong>Start transcription</strong> button to start.</li>
             </ol>
 
             <div class="alert alert-tip">
                 <strong>Simulated Task:</strong>
                 1. Click the upload zone on the right to load the trimmed video.
                 2. Select <strong>Full — transcription + on-screen text</strong>.
-                3. Click <strong>Start transcription</strong>. Watch the job run in the Recent Jobs list!
+                3. Click <strong>Start transcription</strong>. You will see the job start running in the Recent jobs list!
             </div>
         `
     },
-    // Step 4: Access Reports
+    // Step 4: Download Report
     {
-        title: "4. Retrieve & Download Word Reports",
+        title: "4. Download Report",
         html: `
-            <h3>Reviewing Outputs and Reports</h3>
-            <p>Once LingoChaps finishes processing the transcription, the task's state in the <strong>Recent jobs</strong> panel updates to <span class="status-badge done" style="display:inline-block;">DONE</span> (100%).</p>
+            <h3>Checking Outputs & Downloading Reports</h3>
+            <p>When the LingoChaps Transcription Tool finishes processing your file, the job status will change to <span class="status-badge done" style="display:inline-block;">DONE</span> (100%).</p>
 
             <h4>Instructions:</h4>
             <ol>
-                <li>Find your processed job at the top of the **Recent jobs** list.</li>
-                <li>Click on the job item to slide open the **Detailed Results** panel on the right.</li>
-                <li>Verify that the dialog transcript and on-screen text entries are populated.</li>
-                <li>Click the blue <strong>Download Word Report</strong> button to save the completed DOCX deliverable.</li>
+                <li>Find your completed job at the top of the **Recent jobs** list.</li>
+                <li>Click on the job to open the **Job Details** panel on the right.</li>
+                <li>Check the transcription text and translations to make sure they look correct.</li>
+                <li>Click the <strong>Download Word Report</strong> button to save the final report file to your computer.</li>
             </ol>
 
             <div class="alert alert-tip">
-                <strong>Simulated Task:</strong> In the sandbox, click on the top job in the "Recent jobs" list to open the drawer. Then, click <strong>"Download Word Report"</strong> inside the drawer.
+                <strong>Simulated Task:</strong> Click on your completed job in the "Recent jobs" list to open the side panel. Then, click the blue <strong>"Download Word Report"</strong> button.
             </div>
         `
     },
@@ -203,16 +229,16 @@ const stepsContent = [
         title: "Training Complete!",
         html: `
             <h3>Congratulations!</h3>
-            <p>You have completed the core training simulation for preparing and submitting video assets at LingoChaps.</p>
+            <p>You have finished the training simulation for downloading, trimming, and transcribing video assets using the Video Trimmer and LingoChaps Transcription Tool.</p>
 
             <div class="alert alert-tip">
-                <strong>Key Quality Checks Before Submitting:</strong><br>
-                &bull; Ensure video trims are precise to avoid transcribing unrequested footage.<br>
-                &bull; Always double check the <strong>Output</strong> mode: Full vs. Transcript vs. On-Screen text.<br>
-                &bull; Download and inspect Word Reports for alignment issues before delivering to clients.
+                <strong>Important Rules to Remember:</strong><br>
+                &bull; Always trim files before uploading to the LingoChaps Transcription Tool. Do not upload large raw video files.<br>
+                &bull; Make sure you select the correct <strong>Output</strong> mode (Full vs. Transcript vs. On-Screen text).<br>
+                &bull; Always open and check the downloaded Word report before sending it to clients.
             </div>
 
-            <p>You can restart this training guide anytime to review specific portal tools.</p>
+            <p>You can restart this training guide anytime to practice again.</p>
         `
     }
 ];
@@ -522,166 +548,501 @@ function renderSSYouSandbox() {
     });
 }
 
-// Online Video Cutter Sandbox View
+// Desktop Video Trimmer Sandbox View
 function renderCutterSandbox() {
-    els.sandboxTitle.textContent = "Online Video Cutter Simulator (online-video-cutter.com)";
+    els.sandboxTitle.textContent = "Video Trimmer Desktop App";
 
     const browserFrame = document.createElement('div');
     browserFrame.className = 'browser-frame';
-    browserFrame.innerHTML = `
-        <div class="browser-titlebar">
-            <div class="browser-dots">
-                <div class="browser-dot dot-red"></div>
-                <div class="browser-dot dot-yellow"></div>
-                <div class="browser-dot dot-green"></div>
-            </div>
-            <div class="browser-address-bar">
-                <span class="address-lock">🔒</span> https://online-video-cutter.com/
-            </div>
-        </div>
-        <div class="browser-viewport">
-            <div class="cutter-container">
-                <div class="cutter-header">
-                    <h2 class="cutter-logo">123apps <span>Video Cutter</span></h2>
-                    <p style="font-size: 0.75rem; color: #94a3b8; margin-top:4px;">Crop, rotate, cut and trim videos online</p>
-                </div>
-
-                <div class="cutter-workspace">
-                    <div class="cutter-upload-box" id="cutter-dropzone">
-                        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" style="margin-bottom:12px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
-                        <h4 style="font-size: 0.9rem; font-weight:600;">Open File</h4>
-                        <p style="font-size: 0.75rem; color: #64748b; margin-top:4px;">Select the downloaded Persian_Tutorial_Session.mp4 file</p>
-                    </div>
-
-                    <div class="cutter-editor" id="cutter-workspace-editor">
-                        <div class="cutter-video-preview">
-                            <div class="preview-overlay-info">Preview File: Persian_Tutorial_Session.mp4</div>
-                            <div class="mock-video-player">
-                                <span class="video-status-indicator">00:00 / 16:00</span>
-                                <div class="play-button-large">
-                                    <div class="play-icon"></div>
-                                </div>
-                                <div class="video-bottom-controls">
-                                    <div class="video-progress-track">
-                                        <div class="video-progress-fill"></div>
-                                    </div>
-                                    <div class="video-controls-row">
-                                        <span>▶ Play</span>
-                                        <span>⚙ 1080p</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="cutter-timeline-container">
-                            <div style="font-size:0.75rem; color:#94a3b8; margin-bottom:8px;">Timeline Range Selection</div>
-                            <div class="cutter-timeline-track">
-                                <div class="timeline-handles"></div>
-                            </div>
-                            <div class="cutter-controls">
-                                <div class="control-group">
-                                    <label>Start:</label>
-                                    <input type="text" class="cutter-input" id="cutter-start-input" value="${state.simulations.cutterStart}">
-                                </div>
-                                <div class="control-group">
-                                    <label>End:</label>
-                                    <input type="text" class="cutter-input" id="cutter-end-input" value="${state.simulations.cutterEnd}">
-                                </div>
-                                <button class="btn-cutter-save" id="cutter-save-btn">
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M12 15V3"/></svg>
-                                    Save
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="cutter-saving" id="cutter-saving-screen">
-                        <div class="spinner" style="border-top-color: #3b82f6; width:40px; height:40px;"></div>
-                        <h4 style="font-size: 0.9rem; margin-top:12px;">Trimming and packaging file...</h4>
-                        <div class="progress-bar-bg" style="width: 200px; margin-top:10px;">
-                            <div class="progress-bar-fill" id="cutter-bar-fill" style="width: 0%;"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    `;
-    els.sandboxView.appendChild(browserFrame);
-
-    const dropzone = browserFrame.querySelector('#cutter-dropzone');
-    const editor = browserFrame.querySelector('#cutter-workspace-editor');
-    const savingScreen = browserFrame.querySelector('#cutter-saving-screen');
-    const saveBtn = browserFrame.querySelector('#cutter-save-btn');
-    const startInput = browserFrame.querySelector('#cutter-start-input');
-    const endInput = browserFrame.querySelector('#cutter-end-input');
-    const cutterBarFill = browserFrame.querySelector('#cutter-bar-fill');
-
-    // Verify step order check
+    
+    // Check if file missing
     if (!state.downloadedFile) {
-        dropzone.innerHTML = `
-            <div style="color: #ef4444; padding: 20px;">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-bottom:8px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                <h4 style="font-size: 0.9rem; font-weight:600;">Assets Missing</h4>
-                <p style="font-size: 0.75rem; color: #94a3b8; margin-top:4px;">You must complete <strong>Step 1</strong> to download the video before you can trim it.</p>
-                <button class="btn btn-sm btn-primary" style="margin-top:12px;" onclick="renderStep(1)">Go back to Step 1</button>
+        browserFrame.innerHTML = `
+            <div style="color: #ef4444; padding: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; height:100%; text-align:center;">
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-bottom:12px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                <h4 style="font-size: 0.95rem; font-weight:700;">Assets Missing</h4>
+                <p style="font-size: 0.8rem; color: #94a3b8; margin-top:4px; max-width:320px;">You must complete <strong>Step 1</strong> to download the video file before you can trim it.</p>
+                <button class="btn btn-sm btn-primary" style="margin-top:16px;" onclick="renderStep(1)">Go back to Step 1</button>
             </div>
         `;
+        els.sandboxView.appendChild(browserFrame);
         return;
     }
 
     if (state.trimmedFile) {
-        dropzone.style.display = 'none';
-        editor.style.display = 'none';
-        savingScreen.style.display = 'flex';
-        savingScreen.innerHTML = `
-            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-            <h4 style="font-size: 0.9rem; margin-top:12px; color:#10b981;">File Trimmed & Saved!</h4>
-            <p style="font-size:0.75rem; color:#94a3b8; margin-top:4px;"><code>Persian_Tutorial_Session_Trimmed.mp4</code> (0:00 - 4:00) is saved.</p>
-            <button class="btn btn-sm btn-primary" style="margin-top:12px;" onclick="renderStep(3)">Submit to LingoChaps</button>
+        browserFrame.innerHTML = `
+            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height:100%; text-align:center; padding: 20px;">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5" style="margin-bottom:12px;"><polyline points="20 6 9 17 4 12"/></svg>
+                <h4 style="font-size: 1rem; color:#10b981; font-weight:700;">All segments trimmed!</h4>
+                <p style="font-size:0.8rem; color:#94a3b8; margin-top:4px;">Trimmed file: <code>Persian_Tutorial_Session_Trimmed.mp4</code> is saved.</p>
+                <button class="btn btn-sm btn-primary" style="margin-top:16px;" onclick="renderStep(3)">Proceed to Upload Step</button>
+            </div>
         `;
+        els.sandboxView.appendChild(browserFrame);
         return;
     }
 
-    dropzone.addEventListener('click', () => {
-        dropzone.style.display = 'none';
-        editor.style.display = 'block';
-        showToast("Mock uploaded: Persian_Tutorial_Session.mp4");
+    if (!state.simulations.trimmerLoaded) {
+        browserFrame.innerHTML = `
+            <div class="trimmer-window" style="display: flex; flex-direction: column; height: 100%; background-color: #0f172a; color: #e2e8f0; font-size: 0.85rem;">
+                <div class="trimmer-titlebar" style="background-color: #1e293b; padding: 8px 16px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid #334155;">
+                    <div class="trimmer-dots" style="display: flex; gap: 6px;">
+                        <div class="trimmer-dot dot-red" style="width: 10px; height: 10px; border-radius: 50%; background-color: #ef4444;"></div>
+                        <div class="trimmer-dot dot-yellow" style="width: 10px; height: 10px; border-radius: 50%; background-color: #f59e0b;"></div>
+                        <div class="trimmer-dot dot-green" style="width: 10px; height: 10px; border-radius: 50%; background-color: #10b981;"></div>
+                    </div>
+                    <span class="trimmer-title" style="font-weight: 600; font-size: 0.75rem; color: #94a3b8; letter-spacing: 0.05em; text-transform: uppercase;">Video Trimmer - Desktop App</span>
+                </div>
+                
+                <div style="flex-grow:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:30px; border: 2px dashed #334155; margin: 16px; border-radius:12px; background:#0b0f19; cursor:pointer;" id="trimmer-open-zone">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" style="margin-bottom:16px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+                    <h4 style="font-weight:600; font-size:0.95rem;">Load Video/Audio Asset</h4>
+                    <p style="font-size:0.75rem; color:#64748b; margin-top:4px;">Click the "Open Video" button above or click here to load <code>Persian_Tutorial_Session.mp4</code></p>
+                    <button class="trimmer-btn" style="margin-top:16px; background: #3b82f6; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.75rem;">Open Video</button>
+                </div>
+            </div>
+        `;
+        els.sandboxView.appendChild(browserFrame);
+
+        const openZone = browserFrame.querySelector('#trimmer-open-zone');
+        openZone.addEventListener('click', () => {
+            state.simulations.trimmerLoaded = true;
+            renderSandbox(2);
+            showToast("Loaded: Persian_Tutorial_Session.mp4");
+        });
+        return;
+    }
+
+    // Editor UI state
+    if (!state.simulations.trimQueue) {
+        state.simulations.trimQueue = [];
+    }
+
+    let queueHtml = '';
+    if (state.simulations.trimQueue.length === 0) {
+        queueHtml = `<div class="trimmer-queue-empty" id="trimmer-queue-empty" style="font-size: 0.7rem; color: #475569; text-align: center; margin-top: 20px;">No clips in list.<br>Set start/end and click Add to List.</div>`;
+    } else {
+        state.simulations.trimQueue.forEach((itemText, idx) => {
+            queueHtml += `
+                <div class="trimmer-queue-item" style="font-size: 0.7rem; background: #1e293b; border-radius: 4px; padding: 6px; margin-bottom: 6px; border: 1px solid #334155; display: flex; justify-content: space-between; align-items: center;">
+                    <span>${idx + 1}. ${itemText}</span>
+                    <button style="background:none; border:none; color:#ef4444; cursor:pointer;" onclick="event.stopPropagation(); removeQueueItem(${idx});">✕</button>
+                </div>
+            `;
+        });
+    }
+
+    window.removeQueueItem = (idx) => {
+        state.simulations.trimQueue.splice(idx, 1);
+        renderSandbox(2);
+    };
+
+    browserFrame.innerHTML = `
+        <style>
+            .trimmer-window {
+                display: flex;
+                flex-direction: column;
+                height: 100%;
+                background-color: #0f172a;
+                color: #e2e8f0;
+                font-size: 0.8rem;
+            }
+            .trimmer-titlebar {
+                background-color: #1e293b;
+                padding: 8px 16px;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                border-bottom: 1px solid #334155;
+            }
+            .trimmer-dots {
+                display: flex;
+                gap: 6px;
+            }
+            .trimmer-dot {
+                width: 10px;
+                height: 10px;
+                border-radius: 50%;
+            }
+            .trimmer-title {
+                font-weight: 600;
+                font-size: 0.75rem;
+                color: #94a3b8;
+                letter-spacing: 0.05em;
+                text-transform: uppercase;
+            }
+            .trimmer-toolbar {
+                background-color: #1e293b;
+                padding: 8px 16px;
+                display: flex;
+                align-items: center;
+                gap: 16px;
+                border-bottom: 1px solid #334155;
+            }
+            .trimmer-btn {
+                background: #3b82f6;
+                color: white;
+                border: none;
+                padding: 6px 12px;
+                border-radius: 6px;
+                cursor: pointer;
+                font-weight: 600;
+                font-size: 0.75rem;
+                transition: 0.2s;
+            }
+            .trimmer-btn:hover {
+                background: #2563eb;
+            }
+            .trimmer-btn-outline {
+                background: transparent;
+                border: 1px solid #475569;
+                color: #cbd5e1;
+                padding: 6px 12px;
+                border-radius: 6px;
+                cursor: pointer;
+                font-weight: 600;
+                font-size: 0.75rem;
+            }
+            .trimmer-btn-outline:hover {
+                background: #334155;
+            }
+            .trimmer-toggle-label {
+                font-size: 0.75rem;
+                color: #94a3b8;
+            }
+            .trimmer-body {
+                flex-grow: 1;
+                display: flex;
+                overflow: hidden;
+            }
+            .trimmer-left {
+                flex: 1;
+                padding: 16px;
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+                border-right: 1px solid #334155;
+            }
+            .trimmer-right {
+                width: 260px;
+                padding: 16px;
+                display: flex;
+                flex-direction: column;
+                gap: 16px;
+                background-color: #111827;
+            }
+            .trimmer-player {
+                flex-grow: 1;
+                background-color: #020617;
+                border: 1px solid #334155;
+                border-radius: 8px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                position: relative;
+            }
+            .trimmer-player-text {
+                font-size: 0.75rem;
+                color: #64748b;
+            }
+            .trimmer-player-status {
+                position: absolute;
+                bottom: 8px;
+                left: 8px;
+                background: rgba(0,0,0,0.6);
+                padding: 2px 6px;
+                border-radius: 4px;
+                font-size: 0.7rem;
+            }
+            .trimmer-slider-track {
+                height: 6px;
+                background: #334155;
+                border-radius: 3px;
+                position: relative;
+                cursor: pointer;
+            }
+            .trimmer-slider-fill {
+                position: absolute;
+                left: 0;
+                top: 0;
+                height: 100%;
+                background: #3b82f6;
+                width: 25%;
+                border-radius: 3px;
+            }
+            .trimmer-slider-handle {
+                position: absolute;
+                top: -4px;
+                width: 14px;
+                height: 14px;
+                background: white;
+                border-radius: 50%;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+                cursor: pointer;
+            }
+            .trimmer-controls {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                background: #1e293b;
+                padding: 8px 12px;
+                border-radius: 8px;
+            }
+            .trimmer-input-group {
+                display: flex;
+                align-items: center;
+                gap: 6px;
+            }
+            .trimmer-input {
+                width: 60px;
+                background: #0f172a;
+                border: 1px solid #475569;
+                color: white;
+                padding: 4px;
+                border-radius: 4px;
+                font-size: 0.75rem;
+                text-align: center;
+            }
+            .trimmer-section-title {
+                font-weight: 700;
+                font-size: 0.75rem;
+                color: #3b82f6;
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+                margin-bottom: 8px;
+            }
+            .trimmer-split-inputs {
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                margin-bottom: 8px;
+            }
+            .trimmer-queue-box {
+                flex-grow: 1;
+                border: 1px solid #334155;
+                background: #0b0f19;
+                border-radius: 6px;
+                padding: 8px;
+                overflow-y: auto;
+            }
+            .trimmer-queue-empty {
+                font-size: 0.7rem;
+                color: #475569;
+                text-align: center;
+                margin-top: 20px;
+            }
+            .trimmer-queue-item {
+                font-size: 0.7rem;
+                background: #1e293b;
+                border-radius: 4px;
+                padding: 6px;
+                margin-bottom: 6px;
+                border: 1px solid #334155;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+            .trimmer-footer {
+                background-color: #1e293b;
+                padding: 12px 16px;
+                border-top: 1px solid #334155;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+            }
+        </style>
+
+        <div class="trimmer-window" id="trimmer-window-editor">
+            <!-- Title Bar -->
+            <div class="trimmer-titlebar">
+                <div class="trimmer-dots">
+                    <div class="trimmer-dot dot-red"></div>
+                    <div class="trimmer-dot dot-yellow"></div>
+                    <div class="trimmer-dot dot-green"></div>
+                </div>
+                <span class="trimmer-title">Video Trimmer - Desktop App</span>
+            </div>
+
+            <!-- Toolbar -->
+            <div class="trimmer-toolbar">
+                <button class="trimmer-btn-outline" id="trimmer-reopen-btn">Open Video</button>
+                <div style="display:flex; align-items:center; gap:6px;">
+                    <span class="trimmer-toggle-label">Video / Audio only:</span>
+                    <input type="checkbox" id="trimmer-audio-toggle" style="cursor:pointer;">
+                </div>
+                <div style="font-size: 0.75rem; color: #94a3b8; margin-left:auto;">Loaded: <strong>Persian_Tutorial_Session.mp4</strong></div>
+            </div>
+
+            <!-- Main Body -->
+            <div class="trimmer-body">
+                <!-- Left panel: Preview & Cut controls -->
+                <div class="trimmer-left">
+                    <div class="trimmer-player">
+                        <span class="trimmer-player-text">▶ Click play to preview video</span>
+                        <span class="trimmer-player-status">00:00 / 16:00</span>
+                    </div>
+                    <div class="trimmer-slider-track">
+                        <div class="trimmer-slider-fill"></div>
+                        <div class="trimmer-slider-handle" style="left: 25%;"></div>
+                    </div>
+                    <div class="trimmer-controls">
+                        <div class="trimmer-input-group">
+                            <button class="trimmer-btn-outline" id="trimmer-set-start">Set Start</button>
+                            <input type="text" class="trimmer-input" id="trimmer-start-val" value="${state.simulations.cutterStart}">
+                        </div>
+                        <div class="trimmer-input-group">
+                            <button class="trimmer-btn-outline" id="trimmer-set-end">Set End</button>
+                            <input type="text" class="trimmer-input" id="trimmer-end-val" value="${state.simulations.cutterEnd}">
+                        </div>
+                        <button class="trimmer-btn" id="trimmer-add-list">Add to List</button>
+                    </div>
+                </div>
+
+                <!-- Right panel: Auto-split & Queue -->
+                <div class="trimmer-right">
+                    <div>
+                        <div class="trimmer-section-title">Auto-split Options</div>
+                        <div style="display:flex; flex-direction:column; gap:6px;">
+                            <div>
+                                <label style="font-size:0.7rem; color:#94a3b8;">Into parts:</label>
+                                <div class="trimmer-split-inputs">
+                                    <input type="number" class="trimmer-input" id="trimmer-parts-input" value="2" style="width:50px;">
+                                    <button class="trimmer-btn-outline" id="trimmer-btn-split-parts" style="padding:4px 8px;">Split</button>
+                                </div>
+                            </div>
+                            <div>
+                                <label style="font-size:0.7rem; color:#94a3b8;">Every interval (h:m:s):</label>
+                                <div class="trimmer-split-inputs">
+                                    <input type="text" class="trimmer-input" id="trimmer-split-time" value="00:08:00" style="width:70px;">
+                                    <button class="trimmer-btn-outline" id="trimmer-btn-split-time" style="padding:4px 8px;">Split</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="flex-grow:1; display:flex; flex-direction:column; min-height:0;">
+                        <div class="trimmer-section-title">Trim Queue</div>
+                        <div class="trimmer-queue-box" id="trimmer-queue-list">
+                            ${queueHtml}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="trimmer-footer">
+                <div style="display:flex; align-items:center; gap:8px;">
+                    <span style="font-size:0.75rem; color:#94a3b8;">Save folder:</span>
+                    <strong style="font-size:0.75rem; color:#f1f5f9;">trimmed video</strong>
+                    <button class="trimmer-btn-outline" style="padding:2px 8px; font-size:0.7rem;">Choose...</button>
+                </div>
+                <div style="display:flex; align-items:center; gap:16px;">
+                    <label style="display:flex; align-items:center; gap:6px; font-size:0.75rem; cursor:pointer;">
+                        <input type="checkbox" id="trimmer-mp3-toggle"> Convert to MP3
+                    </label>
+                    <button class="trimmer-btn" id="trimmer-trim-all" style="background:#10b981;" ${state.simulations.trimQueue.length === 0 ? 'disabled' : ''}>Trim All</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Saving progress overlay -->
+        <div class="trimmer-window" id="trimmer-saving-overlay" style="display:none; align-items:center; justify-content:center; height:100%;">
+            <div class="spinner" style="border-top-color: #3b82f6; width:40px; height:40px; margin-bottom:12px;"></div>
+            <h4 style="font-size: 0.95rem; font-weight:600;">Rendering and saving segments...</h4>
+            <div class="progress-bar-bg" style="width: 200px; margin-top:10px;">
+                <div class="progress-bar-fill" id="trimmer-bar-fill" style="width: 0%;"></div>
+            </div>
+        </div>
+    `;
+
+    els.sandboxView.appendChild(browserFrame);
+
+    // Event hooks
+    const startVal = browserFrame.querySelector('#trimmer-start-val');
+    const endVal = browserFrame.querySelector('#trimmer-end-val');
+    const setStartBtn = browserFrame.querySelector('#trimmer-set-start');
+    const setEndBtn = browserFrame.querySelector('#trimmer-set-end');
+    const addListBtn = browserFrame.querySelector('#trimmer-add-list');
+    const trimAllBtn = browserFrame.querySelector('#trimmer-trim-all');
+    const editorWindow = browserFrame.querySelector('#trimmer-window-editor');
+    const savingOverlay = browserFrame.querySelector('#trimmer-saving-overlay');
+    const progressBar = browserFrame.querySelector('#trimmer-bar-fill');
+    
+    const splitPartsBtn = browserFrame.querySelector('#trimmer-btn-split-parts');
+    const partsInput = browserFrame.querySelector('#trimmer-parts-input');
+    const splitTimeBtn = browserFrame.querySelector('#trimmer-btn-split-time');
+    const timeInput = browserFrame.querySelector('#trimmer-split-time');
+    const reopenBtn = browserFrame.querySelector('#trimmer-reopen-btn');
+
+    reopenBtn.addEventListener('click', () => {
+        state.simulations.trimmerLoaded = false;
+        renderSandbox(2);
     });
 
-    saveBtn.addEventListener('click', () => {
-        state.simulations.cutterStart = startInput.value;
-        state.simulations.cutterEnd = endInput.value;
-        
-        editor.style.display = 'none';
-        savingScreen.style.display = 'flex';
-        
-        let progress = 0;
+    setStartBtn.addEventListener('click', () => {
+        startVal.value = "00:00";
+        state.simulations.cutterStart = "00:00";
+        showToast("Start point set to 00:00");
+    });
+
+    setEndBtn.addEventListener('click', () => {
+        endVal.value = "04:00";
+        state.simulations.cutterEnd = "04:00";
+        showToast("End point set to 04:00");
+    });
+
+    addListBtn.addEventListener('click', () => {
+        const itemText = `Persian_Tutorial_Session.mp4 (${startVal.value} to ${endVal.value})`;
+        state.simulations.trimQueue.push(itemText);
+        showToast("Clip range added to list.");
+        renderSandbox(2);
+    });
+
+    splitPartsBtn.addEventListener('click', () => {
+        const parts = parseInt(partsInput.value) || 2;
+        state.simulations.trimQueue = [];
+        for (let i = 0; i < parts; i++) {
+            state.simulations.trimQueue.push(`Persian_Tutorial_Session.mp4 Part ${i+1}`);
+        }
+        showToast(`Auto-split generated ${parts} parts.`);
+        renderSandbox(2);
+    });
+
+    splitTimeBtn.addEventListener('click', () => {
+        state.simulations.trimQueue = [
+            `Persian_Tutorial_Session.mp4 Segment 1 (00:00:00 to 00:08:00)`,
+            `Persian_Tutorial_Session.mp4 Segment 2 (00:08:00 to 00:16:00)`
+        ];
+        showToast(`Auto-split generated segments every ${timeInput.value}.`);
+        renderSandbox(2);
+    });
+
+    trimAllBtn.addEventListener('click', () => {
+        editorWindow.style.display = 'none';
+        savingOverlay.style.display = 'flex';
+
+        let p = 0;
         const interval = setInterval(() => {
-            progress += 25;
-            cutterBarFill.style.width = `${progress}%`;
-            if (progress >= 100) {
+            p += 20;
+            progressBar.style.width = `${p}%`;
+            if (p >= 100) {
                 clearInterval(interval);
                 state.trimmedFile = {
                     name: 'Persian_Tutorial_Session_Trimmed.mp4',
-                    start: state.simulations.cutterStart,
-                    end: state.simulations.cutterEnd,
+                    start: '00:00',
+                    end: '04:00',
                     size: '32 MB'
                 };
-                savingScreen.innerHTML = `
-                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5" style="margin-bottom:8px;"><polyline points="20 6 9 17 4 12"/></svg>
-                    <h4 style="font-size: 0.9rem; color:#10b981;">Trimmed successfully!</h4>
-                    <p style="font-size:0.75rem; color:#94a3b8; margin-top:4px;">Saved as: <code>Persian_Tutorial_Session_Trimmed.mp4</code></p>
-                    <button class="btn btn-sm btn-primary" style="margin-top:12px;" onclick="renderStep(3)">Proceed to LingoChaps upload</button>
-                `;
-                showToast("Trimmed video saved successfully. Move to Step 3.");
+                showToast("All segments trimmed! Saved to Downloads folder.");
+                renderSandbox(2);
             }
-        }, 400);
+        }, 300);
     });
 }
 
 // Lingochaps Simulator (Replicating exact UI layout from screenshots)
 function renderLingochapsSandbox(isVerificationMode) {
-    els.sandboxTitle.textContent = "LingoChaps Internal Portal (studio.lingochaps.com)";
+    els.sandboxTitle.textContent = "LingoChaps Transcription Tool (studio.lingochaps.com)";
 
     const browserFrame = document.createElement('div');
     browserFrame.className = 'browser-frame';
@@ -701,12 +1062,12 @@ function renderLingochapsSandbox(isVerificationMode) {
         <div class="browser-viewport" style="display:flex; flex-direction:column;">
             <div class="lingochaps-app">
                 
-                <!-- Lingochaps Top Header -->
+                <!-- LingoChaps Top Header -->
                 <header class="lingochaps-header">
                     <div class="lingochaps-brand">
                         <div class="lingochaps-logo-graphic">LC</div>
                         <div class="lingochaps-logo-text">
-                            <h3>Lingochaps tool</h3>
+                            <h3>LingoChaps Tool</h3>
                             <span>INTERNAL WORKSPACE</span>
                         </div>
                     </div>
@@ -735,7 +1096,7 @@ function renderLingochapsSandbox(isVerificationMode) {
                             </div>
                         </div>
                         <div class="lingochaps-sidebar-subtext">
-                            Add more tools by extending the module list—each tool gets its own route and card here.
+                            LingoChaps Transcription Tool is our main tool to transcribe and translate files.
                         </div>
                     </aside>
 
@@ -745,7 +1106,7 @@ function renderLingochapsSandbox(isVerificationMode) {
                         <!-- Block 1: Upload (Hidden in Step 4 verification mode if already submitted) -->
                         <div class="lingochaps-form-container" id="lingochaps-upload-section" style="${isVerificationMode ? 'display:none;' : ''}">
                             <h2>New transcription</h2>
-                            <p class="subtitle">Upload a video or audio file. We transcribe, translate, tag languages, extract on-screen text (video only), and build a Word report.</p>
+                            <p class="subtitle">Upload a video or audio file. The LingoChaps Transcription Tool will transcribe, translate, tag languages, extract on-screen text (video only), and build a Word report.</p>
                             
                             <div class="step-label">Step 1 — File</div>
                             
@@ -780,7 +1141,7 @@ function renderLingochapsSandbox(isVerificationMode) {
                                 </div>
                                 <div class="option-group">
                                     <label class="group-title">Output</label>
-                                    <p style="font-size:0.7rem; color:#64748b; margin-top:-4px; margin-bottom:6px;">Choose what to run. Transcription uses Gemini on the audio; on-screen text uses video frames + OCR.</p>
+                                    <p style="font-size:0.7rem; color:#64748b; margin-top:-4px; margin-bottom:6px;">Choose how the LingoChaps Transcription Tool should process your file. Transcription handles spoken words; on-screen text extracts text from the video.</p>
                                     
                                     <div class="output-options">
                                         <div class="output-card selected" data-value="full">
@@ -891,7 +1252,7 @@ function renderLingochapsSandbox(isVerificationMode) {
     if (stepIndex === 3 && !state.trimmedFile) {
         zone.outerHTML = `
             <div class="alert alert-warning" style="margin-bottom:20px;">
-                <strong>Missing Asset:</strong> You must complete <strong>Step 2</strong> (Trim to Timestamp) first to obtain the trimmed clip before uploading to Lingochaps.
+                <strong>Missing File:</strong> You must complete <strong>Step 2</strong> (Trim File) first to get the trimmed clip before you can upload to the LingoChaps Transcription Tool.
             </div>
         `;
         return;
