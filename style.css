@@ -286,6 +286,17 @@ body {
     width: 420px;
     flex-shrink: 0;
     padding: 24px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+}
+
+.instruction-panel.collapsed {
+    width: 0;
+    padding: 0;
+    margin: 0;
+    border: none;
+    opacity: 0;
+    pointer-events: none;
 }
 
 .instruction-content {

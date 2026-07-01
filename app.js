@@ -151,7 +151,7 @@ const stepsContent = [
                 </li>
                 <li style="margin-top: 10px;">
                     <strong>Mark the range you need</strong><br>
-                    Drag the slider to find where your clip starts and ends. Click <strong>Set Start</strong> and <strong>Set End</strong>. Then click <strong>Add to List</strong> to put it in the queue. You can repeat this to cut multiple clips from the same file.
+                    Drag the slider to find where your clip starts and ends. Click <strong>Set Start</strong> and <strong>Set End</strong>. The clip will be added to your segments list automatically. You can repeat this to cut multiple clips from the same file.
                 </li>
                 <li style="margin-top: 10px;">
                     <strong>Or use Auto-split instead</strong><br>
@@ -176,8 +176,8 @@ const stepsContent = [
             <div class="alert alert-tip">
                 <strong>Simulated Task:</strong> In the sandbox simulator on the right:
                 1. Click the open zone or the "Open Video" button to load the video.
-                2. Click "Set Start" and "Set End", then click "Add to List".
-                3. Click the green "Trim All" button to export.
+                2. Click "Set Start" and "Set End" to set your clip range (it will be added to segments automatically).
+                3. Click the green "Trim All" button (under Export or at the bottom-right) to export.
             </div>
         `
     },
@@ -263,6 +263,7 @@ const els = {
     sandboxView: document.getElementById('sandbox-view'),
     sandboxTitle: document.getElementById('sandbox-title'),
     resetSandboxBtn: document.getElementById('reset-sandbox-btn'),
+    toggleLayoutBtn: document.getElementById('toggle-layout-btn'),
     toast: document.getElementById('toast')
 };
 
@@ -296,6 +297,18 @@ function setupEventListeners() {
     els.resetSandboxBtn.addEventListener('click', () => {
         resetStepSandbox();
     });
+
+    const instructionPanel = document.querySelector('.instruction-panel');
+    if (els.toggleLayoutBtn && instructionPanel) {
+        els.toggleLayoutBtn.addEventListener('click', () => {
+            instructionPanel.classList.toggle('collapsed');
+            if (instructionPanel.classList.contains('collapsed')) {
+                els.toggleLayoutBtn.textContent = "Show Instructions";
+            } else {
+                els.toggleLayoutBtn.textContent = "Expand Workspace";
+            }
+        });
+    }
 }
 
 // Show Toast Alert
@@ -573,6 +586,7 @@ function renderCutterSandbox() {
 
     const browserFrame = document.createElement('div');
     browserFrame.className = 'browser-frame';
+    browserFrame.style.minWidth = '900px';
     
     // Check if file missing
     if (!state.downloadedFile && !state.simulations.trimmerBypassed) {
@@ -1075,7 +1089,6 @@ function renderCutterSandbox() {
                             <div style="display:flex; gap:8px;">
                                 <button class="trimmer-btn-dark" id="trimmer-set-start" ${isLoaded ? '' : 'disabled'}>Set Start</button>
                                 <button class="trimmer-btn-dark" id="trimmer-set-end" ${isLoaded ? '' : 'disabled'}>Set End</button>
-                                <button class="trimmer-btn-primary" id="trimmer-add-list" style="background:#3b82f6; border-color:#2563eb;" ${isLoaded ? '' : 'disabled'}>Add to List</button>
                             </div>
                             <div style="display:flex; gap:10px; align-items:center;">
                                 <span class="trimmer-badge" id="start-badge">Start: ${formatTimeFull(state.simulations.cutterStartSec)}</span>
@@ -1206,7 +1219,6 @@ function renderCutterSandbox() {
         const playBtn = browserFrame.querySelector('#trimmer-play-btn');
         const setStartBtn = browserFrame.querySelector('#trimmer-set-start');
         const setEndBtn = browserFrame.querySelector('#trimmer-set-end');
-        const addListBtn = browserFrame.querySelector('#trimmer-add-list');
         const startBadge = browserFrame.querySelector('#start-badge');
         const endBadge = browserFrame.querySelector('#end-badge');
         const playOverlay = browserFrame.querySelector('#player-play-overlay');
@@ -1258,26 +1270,19 @@ function renderCutterSandbox() {
             state.simulations.cutterEndSec = state.simulations.playerSliderVal;
             endBadge.textContent = `End: ${formatTimeFull(state.simulations.cutterEndSec)}`;
             showToast(`End point marked at ${formatTimeShort(state.simulations.cutterEndSec)}`);
-        });
 
-        addListBtn.addEventListener('click', () => {
+            // Auto add to queue if start is set
             const start = state.simulations.cutterStartSec;
             const end = state.simulations.cutterEndSec;
-            
-            if (start === null || end === null) {
-                showToast("Please mark both start and end points first.");
-                return;
+            if (start !== null && start < end) {
+                const itemText = `Persian_Tutorial_Session.mp4 (${formatTimeShort(start)} to ${formatTimeShort(end)})`;
+                if (!state.simulations.trimQueue.includes(itemText)) {
+                    state.simulations.trimQueue.push(itemText);
+                    state.simulations.selectedQueueIdx = state.simulations.trimQueue.length - 1;
+                    showToast("Clip range automatically added to list.");
+                    renderSandbox(2);
+                }
             }
-            if (start >= end) {
-                showToast("End point must be after start point.");
-                return;
-            }
-            
-            const itemText = `Persian_Tutorial_Session.mp4 (${formatTimeShort(start)} to ${formatTimeShort(end)})`;
-            state.simulations.trimQueue.push(itemText);
-            state.simulations.selectedQueueIdx = state.simulations.trimQueue.length - 1;
-            showToast("Clip range added to list.");
-            renderSandbox(2);
         });
     }
 
