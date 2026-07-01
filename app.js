@@ -74,7 +74,15 @@ const state = {
         lingochapsLanguages: 'auto-detect',
         lingochapsInstructions: '',
         isJobRunning: false,
-        activeRunningJob: null
+        activeRunningJob: null,
+        trimmerLoaded: false,
+        trimmerBypassed: false,
+        trimQueue: [],
+        playerSliderVal: 0,
+        cutterStartSec: null,
+        cutterEndSec: null,
+        isPlaying: false,
+        selectedQueueIdx: null
     }
 };
 
@@ -364,6 +372,7 @@ function resetStepSandbox() {
 
 function renderSandbox(stepIndex) {
     els.sandboxView.innerHTML = '';
+    els.sandboxView.style.overflowX = ''; // Reset horizontal scrollbar style
     
     switch (stepIndex) {
         case 0:
@@ -552,90 +561,117 @@ function renderSSYouSandbox() {
 function renderCutterSandbox() {
     els.sandboxTitle.textContent = "Video Trimmer Desktop App";
 
+    // Enable horizontal scrollbar dynamically on sandbox view
+    els.sandboxView.style.overflowX = 'auto';
+
+    // Clean up play interval if already active to avoid leaks
+    if (state.simulations.playInterval) {
+        clearInterval(state.simulations.playInterval);
+        state.simulations.playInterval = null;
+        state.simulations.isPlaying = false;
+    }
+
     const browserFrame = document.createElement('div');
     browserFrame.className = 'browser-frame';
     
     // Check if file missing
-    if (!state.downloadedFile) {
+    if (!state.downloadedFile && !state.simulations.trimmerBypassed) {
         browserFrame.innerHTML = `
-            <div style="color: #ef4444; padding: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; height:100%; text-align:center;">
-                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-bottom:12px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                <h4 style="font-size: 0.95rem; font-weight:700;">Assets Missing</h4>
-                <p style="font-size: 0.8rem; color: #94a3b8; margin-top:4px; max-width:320px;">You must complete <strong>Step 1</strong> to download the video file before you can trim it.</p>
-                <button class="btn btn-sm btn-primary" style="margin-top:16px;" onclick="renderStep(1)">Go back to Step 1</button>
+            <div style="color: #ef4444; padding: 30px; display: flex; flex-direction: column; align-items: center; justify-content: center; height:100%; text-align:center; background:#0f1021;">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-bottom:12px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                <h4 style="font-size: 1rem; font-weight:700; color:#cacada;">Assets Missing</h4>
+                <p style="font-size: 0.8rem; color: #70739e; margin-top:6px; max-width:320px;">You must complete <strong>Step 1</strong> to download the video file before you can trim it.</p>
+                <div style="display:flex; gap:12px; margin-top:20px;">
+                    <button class="btn btn-sm btn-secondary" onclick="renderStep(1)">Go back to Step 1</button>
+                    <button class="btn btn-sm btn-primary" id="trimmer-bypass-btn" style="background:#3b82f6;">Download inside Trimmer</button>
+                </div>
             </div>
         `;
         els.sandboxView.appendChild(browserFrame);
+        
+        browserFrame.querySelector('#trimmer-bypass-btn').addEventListener('click', () => {
+            state.simulations.trimmerBypassed = true;
+            renderSandbox(2);
+        });
         return;
     }
 
     if (state.trimmedFile) {
         browserFrame.innerHTML = `
-            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height:100%; text-align:center; padding: 20px;">
+            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height:100%; text-align:center; padding: 30px; background:#0f1021; color:#cacada;">
                 <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5" style="margin-bottom:12px;"><polyline points="20 6 9 17 4 12"/></svg>
-                <h4 style="font-size: 1rem; color:#10b981; font-weight:700;">All segments trimmed!</h4>
-                <p style="font-size:0.8rem; color:#94a3b8; margin-top:4px;">Trimmed file: <code>Persian_Tutorial_Session_Trimmed.mp4</code> is saved.</p>
-                <button class="btn btn-sm btn-primary" style="margin-top:16px;" onclick="renderStep(3)">Proceed to Upload Step</button>
+                <h4 style="font-size: 1.1rem; color:#10b981; font-weight:700;">All segments trimmed!</h4>
+                <p style="font-size:0.85rem; color:#70739e; margin-top:6px;">Trimmed file: <code>Persian_Tutorial_Session_Trimmed.mp4</code> is saved.</p>
+                <button class="btn btn-sm btn-primary" style="margin-top:20px; background:#10b981;" onclick="renderStep(3)">Proceed to Upload Step</button>
             </div>
         `;
         els.sandboxView.appendChild(browserFrame);
         return;
     }
 
-    if (!state.simulations.trimmerLoaded) {
-        browserFrame.innerHTML = `
-            <div class="trimmer-window" style="display: flex; flex-direction: column; height: 100%; background-color: #0f172a; color: #e2e8f0; font-size: 0.85rem;">
-                <div class="trimmer-titlebar" style="background-color: #1e293b; padding: 8px 16px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid #334155;">
-                    <div class="trimmer-dots" style="display: flex; gap: 6px;">
-                        <div class="trimmer-dot dot-red" style="width: 10px; height: 10px; border-radius: 50%; background-color: #ef4444;"></div>
-                        <div class="trimmer-dot dot-yellow" style="width: 10px; height: 10px; border-radius: 50%; background-color: #f59e0b;"></div>
-                        <div class="trimmer-dot dot-green" style="width: 10px; height: 10px; border-radius: 50%; background-color: #10b981;"></div>
-                    </div>
-                    <span class="trimmer-title" style="font-weight: 600; font-size: 0.75rem; color: #94a3b8; letter-spacing: 0.05em; text-transform: uppercase;">Video Trimmer - Desktop App</span>
-                </div>
-                
-                <div style="flex-grow:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:30px; border: 2px dashed #334155; margin: 16px; border-radius:12px; background:#0b0f19; cursor:pointer;" id="trimmer-open-zone">
-                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" style="margin-bottom:16px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
-                    <h4 style="font-weight:600; font-size:0.95rem;">Load Video/Audio Asset</h4>
-                    <p style="font-size:0.75rem; color:#64748b; margin-top:4px;">Click the "Open Video" button above or click here to load <code>Persian_Tutorial_Session.mp4</code></p>
-                    <button class="trimmer-btn" style="margin-top:16px; background: #3b82f6; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.75rem;">Open Video</button>
-                </div>
-            </div>
-        `;
-        els.sandboxView.appendChild(browserFrame);
-
-        const openZone = browserFrame.querySelector('#trimmer-open-zone');
-        openZone.addEventListener('click', () => {
-            state.simulations.trimmerLoaded = true;
-            renderSandbox(2);
-            showToast("Loaded: Persian_Tutorial_Session.mp4");
-        });
-        return;
+    // Time Formatter helpers
+    function formatTimeFull(secs) {
+        if (secs === null || isNaN(secs)) return '--:--:--.---';
+        const h = Math.floor(secs / 3600);
+        const m = Math.floor((secs % 3600) / 60);
+        const s = Math.floor(secs % 60);
+        const ms = Math.floor((secs % 1) * 1000);
+        
+        const pad = (n, size=2) => String(n).padStart(size, '0');
+        return `${pad(h)}:${pad(m)}:${pad(s)}.${pad(ms, 3)}`;
     }
 
-    // Editor UI state
-    if (!state.simulations.trimQueue) {
-        state.simulations.trimQueue = [];
+    function formatTimeShort(secs) {
+        if (secs === null || isNaN(secs)) return '--:--';
+        const m = Math.floor(secs / 60);
+        const s = Math.floor(secs % 60);
+        return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
     }
 
+    // Segment List rendering
     let queueHtml = '';
     if (state.simulations.trimQueue.length === 0) {
-        queueHtml = `<div class="trimmer-queue-empty" id="trimmer-queue-empty" style="font-size: 0.7rem; color: #475569; text-align: center; margin-top: 20px;">No clips in list.<br>Set start/end and click Add to List.</div>`;
+        queueHtml = `<div style="font-size: 0.72rem; color: #53557e; text-align: center; padding: 24px 10px;">No segments in list. Set start/end and click Add to List, or use Auto-split.</div>`;
     } else {
         state.simulations.trimQueue.forEach((itemText, idx) => {
+            const isSelected = state.simulations.selectedQueueIdx === idx;
             queueHtml += `
-                <div class="trimmer-queue-item" style="font-size: 0.7rem; background: #1e293b; border-radius: 4px; padding: 6px; margin-bottom: 6px; border: 1px solid #334155; display: flex; justify-content: space-between; align-items: center;">
-                    <span>${idx + 1}. ${itemText}</span>
-                    <button style="background:none; border:none; color:#ef4444; cursor:pointer;" onclick="event.stopPropagation(); removeQueueItem(${idx});">✕</button>
+                <div class="trimmer-queue-item" data-idx="${idx}" style="font-size: 0.72rem; background: ${isSelected ? '#2d2f5a' : '#16172f'}; border-radius: 4px; padding: 6px 10px; margin-bottom: 6px; border: 1px solid ${isSelected ? '#3c4080' : '#212344'}; display: flex; justify-content: space-between; align-items: center; cursor: pointer; color: ${isSelected ? '#ffffff' : '#cacada'};">
+                    <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 220px;">${idx + 1}. ${itemText}</span>
                 </div>
             `;
         });
     }
 
-    window.removeQueueItem = (idx) => {
-        state.simulations.trimQueue.splice(idx, 1);
-        renderSandbox(2);
-    };
+    const isLoaded = state.simulations.trimmerLoaded;
+    const saveLocationText = isLoaded ? `/Users/snigdha/Downloads/trimmed_video/` : `Open a video to set save location`;
+    
+    // Player Viewport rendering
+    let playerHtml = '';
+    if (!isLoaded) {
+        playerHtml = `
+            <div class="trimmer-player-content">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#53557e" stroke-width="1.5" style="margin-bottom:12px;"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="2" y1="7" x2="7" y2="7"/><line x1="2" y1="17" x2="7" y2="17"/><line x1="17" y1="17" x2="22" y2="17"/><line x1="17" y1="7" x2="22" y2="7"/></svg>
+                <span style="color:#70739e;">Open a video or download from YouTube to start trimming</span>
+            </div>
+        `;
+    } else {
+        playerHtml = `
+            <div style="width:100%; height:100%; display:flex; flex-direction:column; position:relative; background:#06070d; align-items:center; justify-content:center;">
+                <div style="text-align:center; color:#53557e;">
+                    <div style="font-size:1.8rem; margin-bottom:8px; color:#8384df;">🖥️</div>
+                    <div style="font-size:0.75rem; font-weight:600; color:#cacada;">Persian_Tutorial_Session.mp4</div>
+                    <div style="font-size:0.68rem; color:#70739e; margin-top:2px;">Simulated Video Stream (16:00)</div>
+                </div>
+                <div id="player-play-overlay" style="position:absolute; width:48px; height:48px; border-radius:50%; background:rgba(19,20,39,0.75); display:flex; align-items:center; justify-content:center; color:#ffffff; font-size:1.2rem; cursor:pointer; border: 1px solid #3c4080; transition:0.2s;">
+                    ${state.simulations.isPlaying ? '❚❚' : '▶'}
+                </div>
+                <div style="position:absolute; top:8px; left:8px; background:rgba(0,0,0,0.6); padding:2px 6px; border-radius:4px; font-size:0.65rem; color:#cacada;">
+                    720p HD
+                </div>
+            </div>
+        `;
+    }
 
     browserFrame.innerHTML = `
         <style>
@@ -643,401 +679,760 @@ function renderCutterSandbox() {
                 display: flex;
                 flex-direction: column;
                 height: 100%;
-                background-color: #0f172a;
-                color: #e2e8f0;
+                background-color: #0f1021;
+                color: #cacada;
+                font-family: var(--font-family);
                 font-size: 0.8rem;
+                user-select: none;
+                min-width: 900px;
             }
             .trimmer-titlebar {
-                background-color: #1e293b;
-                padding: 8px 16px;
+                background-color: #131427;
+                padding: 10px 16px;
                 display: flex;
                 align-items: center;
-                gap: 12px;
-                border-bottom: 1px solid #334155;
+                justify-content: space-between;
+                border-bottom: 1px solid #232549;
             }
-            .trimmer-dots {
-                display: flex;
-                gap: 6px;
-            }
-            .trimmer-dot {
-                width: 10px;
-                height: 10px;
-                border-radius: 50%;
-            }
-            .trimmer-title {
-                font-weight: 600;
-                font-size: 0.75rem;
-                color: #94a3b8;
-                letter-spacing: 0.05em;
-                text-transform: uppercase;
-            }
-            .trimmer-toolbar {
-                background-color: #1e293b;
-                padding: 8px 16px;
+            .trimmer-title-left {
                 display: flex;
                 align-items: center;
-                gap: 16px;
-                border-bottom: 1px solid #334155;
+                gap: 8px;
             }
-            .trimmer-btn {
-                background: #3b82f6;
+            .trimmer-logo-box {
+                width: 18px;
+                height: 18px;
+                background: linear-gradient(135deg, #8384df, #5051b5);
+                border-radius: 4px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
                 color: white;
-                border: none;
-                padding: 6px 12px;
-                border-radius: 6px;
+                font-size: 0.65rem;
+                font-weight: 800;
+            }
+            .trimmer-title-text {
+                font-weight: 700;
+                font-size: 0.8rem;
+                color: #d5d6e2;
+            }
+            .trimmer-window-controls {
+                display: flex;
+                gap: 8px;
+            }
+            .trimmer-win-btn {
+                color: #70739e;
+                font-size: 0.75rem;
                 cursor: pointer;
-                font-weight: 600;
-                font-size: 0.75rem;
-                transition: 0.2s;
+                transition: color 0.2s;
+                padding: 0 4px;
             }
-            .trimmer-btn:hover {
-                background: #2563eb;
-            }
-            .trimmer-btn-outline {
-                background: transparent;
-                border: 1px solid #475569;
-                color: #cbd5e1;
-                padding: 6px 12px;
-                border-radius: 6px;
-                cursor: pointer;
-                font-weight: 600;
-                font-size: 0.75rem;
-            }
-            .trimmer-btn-outline:hover {
-                background: #334155;
-            }
-            .trimmer-toggle-label {
-                font-size: 0.75rem;
-                color: #94a3b8;
+            .trimmer-win-btn:hover {
+                color: #ffffff;
             }
             .trimmer-body {
                 flex-grow: 1;
                 display: flex;
                 overflow: hidden;
             }
-            .trimmer-left {
-                flex: 1;
+            .trimmer-col-left {
+                width: 330px;
                 padding: 16px;
                 display: flex;
                 flex-direction: column;
-                gap: 12px;
-                border-right: 1px solid #334155;
+                gap: 14px;
+                background-color: #121324;
+                border-right: 1px solid #232549;
+                overflow-y: auto;
+                min-height: 0;
             }
-            .trimmer-right {
-                width: 260px;
-                padding: 16px;
-                display: flex;
-                flex-direction: column;
-                gap: 16px;
-                background-color: #111827;
-            }
-            .trimmer-player {
+            .trimmer-col-right {
                 flex-grow: 1;
-                background-color: #020617;
-                border: 1px solid #334155;
-                border-radius: 8px;
+                padding: 16px;
                 display: flex;
+                flex-direction: column;
+                gap: 14px;
+                background-color: #0b0c16;
+                overflow-y: auto;
+                min-height: 0;
+            }
+            .trimmer-col-left::-webkit-scrollbar, .trimmer-col-right::-webkit-scrollbar, .trimmer-listbox::-webkit-scrollbar {
+                width: 6px;
+            }
+            .trimmer-col-left::-webkit-scrollbar-track, .trimmer-col-right::-webkit-scrollbar-track, .trimmer-listbox::-webkit-scrollbar-track {
+                background: transparent;
+            }
+            .trimmer-col-left::-webkit-scrollbar-thumb, .trimmer-col-right::-webkit-scrollbar-thumb, .trimmer-listbox::-webkit-scrollbar-thumb {
+                background: #232549;
+                border-radius: 3px;
+            }
+            .trimmer-fieldset {
+                border: 1px solid #232549;
+                border-radius: 6px;
+                padding: 12px;
+                margin-bottom: 2px;
+                background-color: #16172f;
+            }
+            .trimmer-fieldset-right {
+                border: 1px solid #232549;
+                border-radius: 6px;
+                padding: 12px;
+                margin-bottom: 2px;
+                background-color: #121324;
+            }
+            .trimmer-legend {
+                font-size: 0.72rem;
+                font-weight: 700;
+                color: #8384df;
+                padding: 0 6px;
+                text-transform: uppercase;
+                letter-spacing: 0.03em;
+            }
+            .trimmer-input-text {
+                background-color: #0c0d1b;
+                border: 1px solid #212344;
+                border-radius: 4px;
+                color: #ffffff;
+                padding: 5px 8px;
+                font-size: 0.76rem;
+                outline: none;
+                flex-grow: 1;
+                transition: border-color 0.2s;
+            }
+            .trimmer-input-text:focus {
+                border-color: #4a4d7c;
+            }
+            .trimmer-input-text::placeholder {
+                color: #4b4d7c;
+            }
+            .trimmer-btn-dark {
+                background-color: #252748;
+                border: 1px solid #3b3e6d;
+                border-radius: 4px;
+                color: #ffffff;
+                padding: 5px 12px;
+                font-size: 0.76rem;
+                cursor: pointer;
+                transition: all 0.2s;
+            }
+            .trimmer-btn-dark:hover {
+                background-color: #31345d;
+                border-color: #4c508f;
+            }
+            .trimmer-btn-dark:disabled {
+                opacity: 0.4;
+                cursor: not-allowed;
+            }
+            .trimmer-btn-primary {
+                background-color: #33385e;
+                border: 1px solid #4a5087;
+                border-radius: 4px;
+                color: #ffffff;
+                padding: 7px 18px;
+                font-size: 0.78rem;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.2s;
+            }
+            .trimmer-btn-primary:hover {
+                background-color: #404675;
+                border-color: #5d64a6;
+            }
+            .trimmer-btn-primary:disabled {
+                opacity: 0.4;
+                cursor: not-allowed;
+            }
+            .trimmer-help-text {
+                color: #70739e;
+                font-size: 0.72rem;
+                margin-top: 3px;
+                margin-bottom: 6px;
+            }
+            .trimmer-radio-row {
+                display: flex;
+                gap: 12px;
+                margin-bottom: 8px;
+                font-size: 0.76rem;
+            }
+            .trimmer-radio-label {
+                display: flex;
+                align-items: center;
+                gap: 5px;
+                cursor: pointer;
+            }
+            .trimmer-select {
+                background-color: #0c0d1b;
+                border: 1px solid #212344;
+                border-radius: 4px;
+                color: #ffffff;
+                padding: 4px 8px;
+                font-size: 0.76rem;
+                outline: none;
+                cursor: pointer;
+            }
+            .trimmer-listbox {
+                background-color: #0c0d1b;
+                border: 1px solid #212344;
+                border-radius: 4px;
+                height: 110px;
+                overflow-y: auto;
+                padding: 6px;
+            }
+            .trimmer-viewport {
+                height: 240px;
+                background-color: #020308;
+                border-radius: 8px;
+                border: 1px solid #212344;
+                display: flex;
+                flex-direction: column;
                 align-items: center;
                 justify-content: center;
                 position: relative;
+                overflow: hidden;
             }
-            .trimmer-player-text {
-                font-size: 0.75rem;
-                color: #64748b;
+            .trimmer-player-content {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                text-align: center;
+                padding: 20px;
+                font-size: 0.76rem;
+                color: #70739e;
             }
-            .trimmer-player-status {
-                position: absolute;
-                bottom: 8px;
-                left: 8px;
-                background: rgba(0,0,0,0.6);
-                padding: 2px 6px;
-                border-radius: 4px;
-                font-size: 0.7rem;
-            }
-            .trimmer-slider-track {
-                height: 6px;
-                background: #334155;
-                border-radius: 3px;
-                position: relative;
-                cursor: pointer;
-            }
-            .trimmer-slider-fill {
-                position: absolute;
-                left: 0;
-                top: 0;
-                height: 100%;
-                background: #3b82f6;
-                width: 25%;
-                border-radius: 3px;
-            }
-            .trimmer-slider-handle {
-                position: absolute;
-                top: -4px;
-                width: 14px;
-                height: 14px;
-                background: white;
-                border-radius: 50%;
-                box-shadow: 0 2px 4px rgba(0,0,0,0.5);
-                cursor: pointer;
-            }
-            .trimmer-controls {
+            .trimmer-player-controls-row {
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
-                background: #1e293b;
+                background-color: #121324;
+                border: 1px solid #232549;
                 padding: 8px 12px;
                 border-radius: 8px;
+                gap: 10px;
             }
-            .trimmer-input-group {
-                display: flex;
-                align-items: center;
-                gap: 6px;
-            }
-            .trimmer-input {
-                width: 60px;
-                background: #0f172a;
-                border: 1px solid #475569;
-                color: white;
-                padding: 4px;
-                border-radius: 4px;
+            .trimmer-time-label {
                 font-size: 0.75rem;
-                text-align: center;
+                color: #cacada;
+                font-family: monospace;
             }
-            .trimmer-section-title {
-                font-weight: 700;
-                font-size: 0.75rem;
-                color: #3b82f6;
-                text-transform: uppercase;
-                letter-spacing: 0.05em;
-                margin-bottom: 8px;
-            }
-            .trimmer-split-inputs {
-                display: flex;
-                align-items: center;
-                gap: 6px;
-                margin-bottom: 8px;
-            }
-            .trimmer-queue-box {
+            .trimmer-range-slider {
                 flex-grow: 1;
-                border: 1px solid #334155;
-                background: #0b0f19;
-                border-radius: 6px;
-                padding: 8px;
-                overflow-y: auto;
+                -webkit-appearance: none;
+                appearance: none;
+                height: 4px;
+                background: #1e203c;
+                border-radius: 2px;
+                outline: none;
+                cursor: pointer;
             }
-            .trimmer-queue-empty {
-                font-size: 0.7rem;
-                color: #475569;
-                text-align: center;
-                margin-top: 20px;
+            .trimmer-range-slider::-webkit-slider-thumb {
+                -webkit-appearance: none;
+                appearance: none;
+                width: 12px;
+                height: 12px;
+                border-radius: 50%;
+                background: #3b82f6;
+                cursor: pointer;
+                transition: background 0.15s;
             }
-            .trimmer-queue-item {
-                font-size: 0.7rem;
-                background: #1e293b;
+            .trimmer-range-slider::-webkit-slider-thumb:hover {
+                background: #60a5fa;
+            }
+            .trimmer-badge {
+                background-color: #1e1f38;
+                border: 1px solid #2d2f5a;
                 border-radius: 4px;
-                padding: 6px;
-                margin-bottom: 6px;
-                border: 1px solid #334155;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
+                padding: 3px 6px;
+                color: #cacada;
+                font-family: monospace;
+                font-size: 0.74rem;
             }
-            .trimmer-footer {
-                background-color: #1e293b;
-                padding: 12px 16px;
-                border-top: 1px solid #334155;
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
+            .spinner {
+                width: 24px;
+                height: 24px;
+                border: 3px solid #1e203c;
+                border-top: 3px solid #3b82f6;
+                border-radius: 50%;
+                animation: spin 0.8s linear infinite;
+            }
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
             }
         </style>
 
         <div class="trimmer-window" id="trimmer-window-editor">
             <!-- Title Bar -->
             <div class="trimmer-titlebar">
-                <div class="trimmer-dots">
-                    <div class="trimmer-dot dot-red"></div>
-                    <div class="trimmer-dot dot-yellow"></div>
-                    <div class="trimmer-dot dot-green"></div>
+                <div class="trimmer-title-left">
+                    <div class="trimmer-logo-box">✂</div>
+                    <span class="trimmer-title-text">Video Trimmer</span>
                 </div>
-                <span class="trimmer-title">Video Trimmer - Desktop App</span>
+                <div class="trimmer-window-controls">
+                    <span class="trimmer-win-btn">─</span>
+                    <span class="trimmer-win-btn">⤢</span>
+                    <span class="trimmer-win-btn">✕</span>
+                </div>
             </div>
 
-            <!-- Toolbar -->
-            <div class="trimmer-toolbar">
-                <button class="trimmer-btn-outline" id="trimmer-reopen-btn">Open Video</button>
-                <div style="display:flex; align-items:center; gap:6px;">
-                    <span class="trimmer-toggle-label">Video / Audio only:</span>
-                    <input type="checkbox" id="trimmer-audio-toggle" style="cursor:pointer;">
-                </div>
-                <div style="font-size: 0.75rem; color: #94a3b8; margin-left:auto;">Loaded: <strong>Persian_Tutorial_Session.mp4</strong></div>
-            </div>
-
-            <!-- Main Body -->
+            <!-- Dashboard Content -->
             <div class="trimmer-body">
-                <!-- Left panel: Preview & Cut controls -->
-                <div class="trimmer-left">
-                    <div class="trimmer-player">
-                        <span class="trimmer-player-text">▶ Click play to preview video</span>
-                        <span class="trimmer-player-status">00:00 / 16:00</span>
-                    </div>
-                    <div class="trimmer-slider-track">
-                        <div class="trimmer-slider-fill"></div>
-                        <div class="trimmer-slider-handle" style="left: 25%;"></div>
-                    </div>
-                    <div class="trimmer-controls">
-                        <div class="trimmer-input-group">
-                            <button class="trimmer-btn-outline" id="trimmer-set-start">Set Start</button>
-                            <input type="text" class="trimmer-input" id="trimmer-start-val" value="${state.simulations.cutterStart}">
+                <!-- Left Column -->
+                <div class="trimmer-col-left">
+                    <!-- Download from YouTube -->
+                    <fieldset class="trimmer-fieldset">
+                        <legend class="trimmer-legend">Download from YouTube</legend>
+                        <div style="display:flex; gap:6px;">
+                            <input type="text" class="trimmer-input-text" id="yt-url-input" placeholder="https://www.youtube.com/watch?..." value="${state.simulations.youtubeUrl || ''}">
+                            <button class="trimmer-btn-dark" id="yt-fetch-btn">Fetch info</button>
                         </div>
-                        <div class="trimmer-input-group">
-                            <button class="trimmer-btn-outline" id="trimmer-set-end">Set End</button>
-                            <input type="text" class="trimmer-input" id="trimmer-end-val" value="${state.simulations.cutterEnd}">
+                        <div class="trimmer-help-text" id="yt-status-text">Paste a URL and click Fetch info</div>
+                        
+                        <div class="trimmer-radio-row">
+                            <label class="trimmer-radio-label">
+                                <input type="radio" name="yt-type" value="video" checked> Video
+                            </label>
+                            <label class="trimmer-radio-label">
+                                <input type="radio" name="yt-type" value="audio"> Audio only
+                            </label>
                         </div>
-                        <button class="trimmer-btn" id="trimmer-add-list">Add to List</button>
-                    </div>
-                </div>
 
-                <!-- Right panel: Auto-split & Queue -->
-                <div class="trimmer-right">
-                    <div>
-                        <div class="trimmer-section-title">Auto-split Options</div>
-                        <div style="display:flex; flex-direction:column; gap:6px;">
-                            <div>
-                                <label style="font-size:0.7rem; color:#94a3b8;">Into parts:</label>
-                                <div class="trimmer-split-inputs">
-                                    <input type="number" class="trimmer-input" id="trimmer-parts-input" value="2" style="width:50px;">
-                                    <button class="trimmer-btn-outline" id="trimmer-btn-split-parts" style="padding:4px 8px;">Split</button>
-                                </div>
-                            </div>
-                            <div>
-                                <label style="font-size:0.7rem; color:#94a3b8;">Every interval (h:m:s):</label>
-                                <div class="trimmer-split-inputs">
-                                    <input type="text" class="trimmer-input" id="trimmer-split-time" value="00:08:00" style="width:70px;">
-                                    <button class="trimmer-btn-outline" id="trimmer-btn-split-time" style="padding:4px 8px;">Split</button>
-                                </div>
-                            </div>
+                        <div class="trimmer-dropdown-row">
+                            <label style="font-size: 0.76rem; color: #cacada; margin-right: 6px;">Format:</label>
+                            <select class="trimmer-select" id="yt-format-select">
+                                <option value="720p">720p</option>
+                                <option value="1080p">1080p</option>
+                                <option value="480p">480p</option>
+                            </select>
                         </div>
-                    </div>
 
-                    <div style="flex-grow:1; display:flex; flex-direction:column; min-height:0;">
-                        <div class="trimmer-section-title">Trim Queue</div>
-                        <div class="trimmer-queue-box" id="trimmer-queue-list">
+                        <div style="display:flex; align-items:center; gap:6px; margin-bottom:12px;">
+                            <span style="font-size:0.74rem; color:#cacada; width:70px; flex-shrink:0;">Save folder:</span>
+                            <input type="text" class="trimmer-input-text" id="yt-save-folder" value="trimmed video" style="height:26px; padding:2px 6px;">
+                            <button class="trimmer-btn-dark" style="padding:2px 6px; height:26px; font-size:0.7rem; flex-shrink:0;">Choose...</button>
+                        </div>
+
+                        <div style="display:flex; justify-content:center;">
+                            <button class="trimmer-btn-primary" id="yt-download-btn" disabled>Download</button>
+                        </div>
+                    </fieldset>
+
+                    <!-- Source -->
+                    <fieldset class="trimmer-fieldset">
+                        <legend class="trimmer-legend">Source</legend>
+                        <button class="trimmer-btn-dark" id="trimmer-open-btn" style="width:100%;">Open Video</button>
+                    </fieldset>
+
+                    <!-- Segments -->
+                    <fieldset class="trimmer-fieldset" style="display:flex; flex-direction:column;">
+                        <legend class="trimmer-legend">Segments</legend>
+                        <div style="display:flex; justify-content:flex-end; gap:6px; margin-bottom:8px;">
+                            <button class="trimmer-btn-dark" id="segment-rename-btn" style="padding: 2px 8px; font-size: 0.68rem;">Rename</button>
+                            <button class="trimmer-btn-dark" id="segment-remove-btn" style="padding: 2px 8px; font-size: 0.68rem;">Remove</button>
+                        </div>
+                        <div class="trimmer-listbox" id="trimmer-queue-list">
                             ${queueHtml}
                         </div>
-                    </div>
-                </div>
-            </div>
+                    </fieldset>
 
-            <!-- Footer -->
-            <div class="trimmer-footer">
-                <div style="display:flex; align-items:center; gap:8px;">
-                    <span style="font-size:0.75rem; color:#94a3b8;">Save folder:</span>
-                    <strong style="font-size:0.75rem; color:#f1f5f9;">trimmed video</strong>
-                    <button class="trimmer-btn-outline" style="padding:2px 8px; font-size:0.7rem;">Choose...</button>
+                    <!-- Export -->
+                    <fieldset class="trimmer-fieldset">
+                        <legend class="trimmer-legend">Export</legend>
+                        <div style="font-size:0.74rem; color:#cacada; margin-bottom:8px; line-height:1.3;">
+                            Save to:
+                            <div style="background-color:#0c0d1b; border:1px solid #212344; border-radius:4px; padding:6px 10px; color:#cacada; font-size:0.76rem; margin-top:4px;" id="trimmer-export-location">
+                                ${saveLocationText}
+                            </div>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px;">
+                            <button class="trimmer-btn-dark" id="export-open-folder-btn" style="padding:5px 12px; font-size:0.76rem;" ${isLoaded ? '' : 'disabled'}>Open Folder</button>
+                            <button class="trimmer-btn-primary" id="trimmer-trim-all" style="background:#10b981; border-color:#059669;" ${isLoaded && state.simulations.trimQueue.length > 0 ? '' : 'disabled'}>Trim All</button>
+                        </div>
+                    </fieldset>
                 </div>
-                <div style="display:flex; align-items:center; gap:16px;">
-                    <label style="display:flex; align-items:center; gap:6px; font-size:0.75rem; cursor:pointer;">
-                        <input type="checkbox" id="trimmer-mp3-toggle"> Convert to MP3
-                    </label>
-                    <button class="trimmer-btn" id="trimmer-trim-all" style="background:#10b981;" ${state.simulations.trimQueue.length === 0 ? 'disabled' : ''}>Trim All</button>
+
+                <!-- Right Column -->
+                <div class="trimmer-col-right">
+                    <!-- Video Preview Viewport -->
+                    <div class="trimmer-viewport" id="trimmer-video-viewport">
+                        ${playerHtml}
+                    </div>
+
+                    <!-- Player Controls Row -->
+                    <div class="trimmer-player-controls-row">
+                        <span class="trimmer-time-label" id="trimmer-current-time">${formatTimeFull(state.simulations.playerSliderVal)}</span>
+                        <input type="range" class="trimmer-range-slider" id="trimmer-time-slider" min="0" max="960" value="${state.simulations.playerSliderVal}" ${isLoaded ? '' : 'disabled'}>
+                        <span class="trimmer-time-label" id="trimmer-duration">${isLoaded ? '00:16:00.000' : '00:00:00.000'}</span>
+                        <button class="trimmer-btn-dark" id="trimmer-play-btn" style="padding:4px 10px; font-size:0.74rem;" ${isLoaded ? '' : 'disabled'}>
+                            ${state.simulations.isPlaying ? 'Pause' : 'Play / Pause'}
+                        </button>
+                    </div>
+
+                    <!-- Mark Range -->
+                    <fieldset class="trimmer-fieldset-right">
+                        <legend class="trimmer-legend">Mark range</legend>
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <div style="display:flex; gap:8px;">
+                                <button class="trimmer-btn-dark" id="trimmer-set-start" ${isLoaded ? '' : 'disabled'}>Set Start</button>
+                                <button class="trimmer-btn-dark" id="trimmer-set-end" ${isLoaded ? '' : 'disabled'}>Set End</button>
+                                <button class="trimmer-btn-primary" id="trimmer-add-list" style="background:#3b82f6; border-color:#2563eb;" ${isLoaded ? '' : 'disabled'}>Add to List</button>
+                            </div>
+                            <div style="display:flex; gap:10px; align-items:center;">
+                                <span class="trimmer-badge" id="start-badge">Start: ${formatTimeFull(state.simulations.cutterStartSec)}</span>
+                                <span class="trimmer-badge" id="end-badge">End: ${formatTimeFull(state.simulations.cutterEndSec)}</span>
+                            </div>
+                        </div>
+                    </fieldset>
+
+                    <!-- Auto-split -->
+                    <fieldset class="trimmer-fieldset-right">
+                        <legend class="trimmer-legend">Auto-split</legend>
+                        <div style="display:flex; flex-direction:column; gap:10px;">
+                            <!-- Parts -->
+                            <div style="display:flex; align-items:center; gap:8px;">
+                                <span style="font-size:0.76rem; color:#cacada; width:45px;">Into</span>
+                                <input type="number" class="trimmer-input-text" id="trimmer-parts-val" value="2" style="width:55px; text-align:center; height:26px; padding:2px;" ${isLoaded ? '' : 'disabled'}>
+                                <span style="font-size:0.76rem; color:#cacada;">parts</span>
+                                <button class="trimmer-btn-dark" id="trimmer-split-parts-btn" style="height:26px; padding:2px 12px; margin-left:8px;" ${isLoaded ? '' : 'disabled'}>Generate</button>
+                            </div>
+                            <!-- Interval -->
+                            <div style="display:flex; align-items:center; gap:8px;">
+                                <span style="font-size:0.76rem; color:#cacada; width:45px;">Every</span>
+                                <input type="number" class="trimmer-input-text" id="trimmer-split-h" value="0" style="width:40px; text-align:center; height:26px; padding:2px;" ${isLoaded ? '' : 'disabled'}>
+                                <span style="font-size:0.74rem; color:#70739e;">h</span>
+                                <input type="number" class="trimmer-input-text" id="trimmer-split-m" value="15" style="width:40px; text-align:center; height:26px; padding:2px;" ${isLoaded ? '' : 'disabled'}>
+                                <span style="font-size:0.74rem; color:#70739e;">m</span>
+                                <input type="number" class="trimmer-input-text" id="trimmer-split-s" value="0" style="width:40px; text-align:center; height:26px; padding:2px;" ${isLoaded ? '' : 'disabled'}>
+                                <span style="font-size:0.74rem; color:#70739e;">s</span>
+                                <button class="trimmer-btn-dark" id="trimmer-split-time-btn" style="height:26px; padding:2px 12px; margin-left:8px;" ${isLoaded ? '' : 'disabled'}>Generate</button>
+                            </div>
+                        </div>
+                    </fieldset>
+
+                    <!-- Right Column Bottom Controls -->
+                    <div style="display:flex; justify-content:flex-end; margin-top:4px;">
+                        <button class="trimmer-btn-primary" id="trimmer-trim-all-right" style="background:#10b981; border-color:#059669; padding: 8px 24px; font-size: 0.8rem;" ${isLoaded && state.simulations.trimQueue.length > 0 ? '' : 'disabled'}>Trim All</button>
+                    </div>
                 </div>
             </div>
         </div>
 
         <!-- Saving progress overlay -->
-        <div class="trimmer-window" id="trimmer-saving-overlay" style="display:none; align-items:center; justify-content:center; height:100%;">
-            <div class="spinner" style="border-top-color: #3b82f6; width:40px; height:40px; margin-bottom:12px;"></div>
-            <h4 style="font-size: 0.95rem; font-weight:600;">Rendering and saving segments...</h4>
-            <div class="progress-bar-bg" style="width: 200px; margin-top:10px;">
-                <div class="progress-bar-fill" id="trimmer-bar-fill" style="width: 0%;"></div>
+        <div class="trimmer-window" id="trimmer-saving-overlay" style="display:none; align-items:center; justify-content:center; height:100%; background:#0f1021;">
+            <div class="spinner" style="width:40px; height:40px; margin-bottom:12px;"></div>
+            <h4 style="font-size: 0.95rem; font-weight:600; color:#cacada;">Rendering and saving segments...</h4>
+            <div class="progress-bar-bg" style="width: 200px; margin-top:10px; background:#212344; height:6px; border-radius:3px; overflow:hidden;">
+                <div class="progress-bar-fill" id="trimmer-bar-fill" style="width: 0%; background:#3b82f6; height:100%;"></div>
             </div>
         </div>
     `;
 
     els.sandboxView.appendChild(browserFrame);
 
-    // Event hooks
-    const startVal = browserFrame.querySelector('#trimmer-start-val');
-    const endVal = browserFrame.querySelector('#trimmer-end-val');
-    const setStartBtn = browserFrame.querySelector('#trimmer-set-start');
-    const setEndBtn = browserFrame.querySelector('#trimmer-set-end');
-    const addListBtn = browserFrame.querySelector('#trimmer-add-list');
-    const trimAllBtn = browserFrame.querySelector('#trimmer-trim-all');
-    const editorWindow = browserFrame.querySelector('#trimmer-window-editor');
-    const savingOverlay = browserFrame.querySelector('#trimmer-saving-overlay');
-    const progressBar = browserFrame.querySelector('#trimmer-bar-fill');
-    
-    const splitPartsBtn = browserFrame.querySelector('#trimmer-btn-split-parts');
-    const partsInput = browserFrame.querySelector('#trimmer-parts-input');
-    const splitTimeBtn = browserFrame.querySelector('#trimmer-btn-split-time');
-    const timeInput = browserFrame.querySelector('#trimmer-split-time');
-    const reopenBtn = browserFrame.querySelector('#trimmer-reopen-btn');
+    // YouTube Downloader Event Listeners
+    const ytUrlInput = browserFrame.querySelector('#yt-url-input');
+    const ytFetchBtn = browserFrame.querySelector('#yt-fetch-btn');
+    const ytStatusText = browserFrame.querySelector('#yt-status-text');
+    const ytDownloadBtn = browserFrame.querySelector('#yt-download-btn');
+    const ytFormatSelect = browserFrame.querySelector('#yt-format-select');
 
-    reopenBtn.addEventListener('click', () => {
-        state.simulations.trimmerLoaded = false;
-        renderSandbox(2);
+    ytUrlInput.addEventListener('input', () => {
+        state.simulations.youtubeUrl = ytUrlInput.value;
     });
 
-    setStartBtn.addEventListener('click', () => {
-        startVal.value = "00:00";
-        state.simulations.cutterStart = "00:00";
-        showToast("Start point set to 00:00");
-    });
-
-    setEndBtn.addEventListener('click', () => {
-        endVal.value = "04:00";
-        state.simulations.cutterEnd = "04:00";
-        showToast("End point set to 04:00");
-    });
-
-    addListBtn.addEventListener('click', () => {
-        const itemText = `Persian_Tutorial_Session.mp4 (${startVal.value} to ${endVal.value})`;
-        state.simulations.trimQueue.push(itemText);
-        showToast("Clip range added to list.");
-        renderSandbox(2);
-    });
-
-    splitPartsBtn.addEventListener('click', () => {
-        const parts = parseInt(partsInput.value) || 2;
-        state.simulations.trimQueue = [];
-        for (let i = 0; i < parts; i++) {
-            state.simulations.trimQueue.push(`Persian_Tutorial_Session.mp4 Part ${i+1}`);
+    ytFetchBtn.addEventListener('click', () => {
+        const urlVal = ytUrlInput.value.trim();
+        if (!urlVal) {
+            showToast("Please enter a YouTube link.");
+            return;
         }
-        showToast(`Auto-split generated ${parts} parts.`);
+        ytFetchBtn.textContent = "Fetching...";
+        ytFetchBtn.disabled = true;
+        ytStatusText.textContent = "Connecting to YouTube service...";
+        
+        setTimeout(() => {
+            ytFetchBtn.textContent = "Fetch info";
+            ytFetchBtn.disabled = false;
+            ytStatusText.innerHTML = `Found video: <strong style="color:#10b981;">Persian Tutorial Session (16:00)</strong>`;
+            ytDownloadBtn.disabled = false;
+            showToast("Video metadata fetched successfully!");
+        }, 1000);
+    });
+
+    ytDownloadBtn.addEventListener('click', () => {
+        ytDownloadBtn.textContent = "Downloading...";
+        ytDownloadBtn.disabled = true;
+        
+        setTimeout(() => {
+            ytDownloadBtn.textContent = "Downloaded";
+            state.downloadedFile = {
+                name: 'Persian_Tutorial_Session.mp4',
+                duration: '16:00',
+                size: ytFormatSelect.value === '1080p' ? '220 MB' : (ytFormatSelect.value === '720p' ? '120 MB' : '75 MB'),
+                youtubeUrl: state.simulations.youtubeUrl
+            };
+            state.simulations.trimmerLoaded = true;
+            state.simulations.playerSliderVal = 0;
+            state.simulations.cutterStartSec = null;
+            state.simulations.cutterEndSec = null;
+            showToast("Video downloaded and loaded into workspace!");
+            renderSandbox(2);
+        }, 1500);
+    });
+
+    // Open Local Video Event Listener
+    const openBtn = browserFrame.querySelector('#trimmer-open-btn');
+    openBtn.addEventListener('click', () => {
+        if (!state.downloadedFile) {
+            state.downloadedFile = {
+                name: 'Persian_Tutorial_Session.mp4',
+                duration: '16:00',
+                size: '120 MB',
+                youtubeUrl: 'https://www.youtube.com/watch?v=mock'
+            };
+        }
+        state.simulations.trimmerLoaded = true;
+        state.simulations.playerSliderVal = 0;
+        state.simulations.cutterStartSec = null;
+        state.simulations.cutterEndSec = null;
+        showToast("Loaded: Persian_Tutorial_Session.mp4");
         renderSandbox(2);
     });
 
-    splitTimeBtn.addEventListener('click', () => {
-        state.simulations.trimQueue = [
-            `Persian_Tutorial_Session.mp4 Segment 1 (00:00:00 to 00:08:00)`,
-            `Persian_Tutorial_Session.mp4 Segment 2 (00:08:00 to 00:16:00)`
-        ];
-        showToast(`Auto-split generated segments every ${timeInput.value}.`);
-        renderSandbox(2);
-    });
+    // Video Player Timeline
+    if (isLoaded) {
+        const timeSlider = browserFrame.querySelector('#trimmer-time-slider');
+        const currentTimeLabel = browserFrame.querySelector('#trimmer-current-time');
+        const playBtn = browserFrame.querySelector('#trimmer-play-btn');
+        const setStartBtn = browserFrame.querySelector('#trimmer-set-start');
+        const setEndBtn = browserFrame.querySelector('#trimmer-set-end');
+        const addListBtn = browserFrame.querySelector('#trimmer-add-list');
+        const startBadge = browserFrame.querySelector('#start-badge');
+        const endBadge = browserFrame.querySelector('#end-badge');
+        const playOverlay = browserFrame.querySelector('#player-play-overlay');
 
-    trimAllBtn.addEventListener('click', () => {
+        timeSlider.addEventListener('input', () => {
+            const val = parseFloat(timeSlider.value);
+            state.simulations.playerSliderVal = val;
+            currentTimeLabel.textContent = formatTimeFull(val);
+        });
+
+        const togglePlay = () => {
+            if (state.simulations.isPlaying) {
+                state.simulations.isPlaying = false;
+                if (state.simulations.playInterval) {
+                    clearInterval(state.simulations.playInterval);
+                    state.simulations.playInterval = null;
+                }
+                playBtn.textContent = 'Play / Pause';
+                if (playOverlay) playOverlay.textContent = '▶';
+            } else {
+                state.simulations.isPlaying = true;
+                playBtn.textContent = 'Pause';
+                if (playOverlay) playOverlay.textContent = '❚❚';
+                
+                state.simulations.playInterval = setInterval(() => {
+                    let val = parseFloat(timeSlider.value) + 1;
+                    if (val > 960) {
+                        val = 0;
+                    }
+                    timeSlider.value = val;
+                    state.simulations.playerSliderVal = val;
+                    currentTimeLabel.textContent = formatTimeFull(val);
+                }, 1000);
+            }
+        };
+
+        playBtn.addEventListener('click', togglePlay);
+        if (playOverlay) {
+            playOverlay.addEventListener('click', togglePlay);
+        }
+
+        setStartBtn.addEventListener('click', () => {
+            state.simulations.cutterStartSec = state.simulations.playerSliderVal;
+            startBadge.textContent = `Start: ${formatTimeFull(state.simulations.cutterStartSec)}`;
+            showToast(`Start point marked at ${formatTimeShort(state.simulations.cutterStartSec)}`);
+        });
+
+        setEndBtn.addEventListener('click', () => {
+            state.simulations.cutterEndSec = state.simulations.playerSliderVal;
+            endBadge.textContent = `End: ${formatTimeFull(state.simulations.cutterEndSec)}`;
+            showToast(`End point marked at ${formatTimeShort(state.simulations.cutterEndSec)}`);
+        });
+
+        addListBtn.addEventListener('click', () => {
+            const start = state.simulations.cutterStartSec;
+            const end = state.simulations.cutterEndSec;
+            
+            if (start === null || end === null) {
+                showToast("Please mark both start and end points first.");
+                return;
+            }
+            if (start >= end) {
+                showToast("End point must be after start point.");
+                return;
+            }
+            
+            const itemText = `Persian_Tutorial_Session.mp4 (${formatTimeShort(start)} to ${formatTimeShort(end)})`;
+            state.simulations.trimQueue.push(itemText);
+            state.simulations.selectedQueueIdx = state.simulations.trimQueue.length - 1;
+            showToast("Clip range added to list.");
+            renderSandbox(2);
+        });
+    }
+
+    // Segments queue interactions
+    const queueListDiv = browserFrame.querySelector('#trimmer-queue-list');
+    const removeBtn = browserFrame.querySelector('#segment-remove-btn');
+    const renameBtn = browserFrame.querySelector('#segment-rename-btn');
+
+    if (queueListDiv) {
+        queueListDiv.querySelectorAll('.trimmer-queue-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const idx = parseInt(item.dataset.idx);
+                state.simulations.selectedQueueIdx = idx;
+                renderSandbox(2);
+            });
+        });
+    }
+
+    if (removeBtn) {
+        removeBtn.addEventListener('click', () => {
+            const selIdx = state.simulations.selectedQueueIdx;
+            if (selIdx === null || selIdx === undefined || selIdx < 0 || selIdx >= state.simulations.trimQueue.length) {
+                showToast("Please select a segment from the list first.");
+                return;
+            }
+            state.simulations.trimQueue.splice(selIdx, 1);
+            state.simulations.selectedQueueIdx = null;
+            showToast("Segment removed.");
+            renderSandbox(2);
+        });
+    }
+
+    if (renameBtn) {
+        renameBtn.addEventListener('click', () => {
+            const selIdx = state.simulations.selectedQueueIdx;
+            if (selIdx === null || selIdx === undefined || selIdx < 0 || selIdx >= state.simulations.trimQueue.length) {
+                showToast("Please select a segment from the list first.");
+                return;
+            }
+            const currentText = state.simulations.trimQueue[selIdx];
+            const newName = prompt("Rename segment:", currentText);
+            if (newName && newName.trim()) {
+                state.simulations.trimQueue[selIdx] = newName.trim();
+                showToast("Segment renamed.");
+                renderSandbox(2);
+            }
+        });
+    }
+
+    // Auto-split options
+    if (isLoaded) {
+        const splitPartsBtn = browserFrame.querySelector('#trimmer-split-parts-btn');
+        const partsValInput = browserFrame.querySelector('#trimmer-parts-val');
+        const splitTimeBtn = browserFrame.querySelector('#trimmer-split-time-btn');
+        const splitH = browserFrame.querySelector('#trimmer-split-h');
+        const splitM = browserFrame.querySelector('#trimmer-split-m');
+        const splitS = browserFrame.querySelector('#trimmer-split-s');
+
+        splitPartsBtn.addEventListener('click', () => {
+            const parts = parseInt(partsValInput.value) || 2;
+            if (parts <= 1) {
+                showToast("Must split into at least 2 parts.");
+                return;
+            }
+            const totalSec = 960;
+            const partDuration = totalSec / parts;
+            state.simulations.trimQueue = [];
+            
+            for (let i = 0; i < parts; i++) {
+                const start = i * partDuration;
+                const end = (i + 1) * partDuration;
+                state.simulations.trimQueue.push(`Persian_Tutorial_Session.mp4 Part ${i+1} (${formatTimeShort(start)} to ${formatTimeShort(end)})`);
+            }
+            state.simulations.selectedQueueIdx = 0;
+            showToast(`Auto-split generated ${parts} parts.`);
+            renderSandbox(2);
+        });
+
+        splitTimeBtn.addEventListener('click', () => {
+            const h = parseInt(splitH.value) || 0;
+            const m = parseInt(splitM.value) || 0;
+            const s = parseInt(splitS.value) || 0;
+            const intervalSec = h * 3600 + m * 60 + s;
+            
+            if (intervalSec <= 0) {
+                showToast("Please enter a split interval greater than 0.");
+                return;
+            }
+            
+            const totalSec = 960;
+            state.simulations.trimQueue = [];
+            let start = 0;
+            let count = 1;
+            
+            while (start < totalSec) {
+                let end = start + intervalSec;
+                if (end > totalSec) end = totalSec;
+                state.simulations.trimQueue.push(`Persian_Tutorial_Session.mp4 Segment ${count} (${formatTimeShort(start)} to ${formatTimeShort(end)})`);
+                start = end;
+                count++;
+            }
+            state.simulations.selectedQueueIdx = 0;
+            showToast(`Auto-split generated ${count-1} segments.`);
+            renderSandbox(2);
+        });
+    }
+
+    // Export / Open Folder / Trim All action
+    const openFolderBtn = browserFrame.querySelector('#export-open-folder-btn');
+    if (openFolderBtn) {
+        openFolderBtn.addEventListener('click', () => {
+            showToast("Opened folder: /Users/snigdha/Downloads/trimmed_video/");
+        });
+    }
+
+    const runTrimAll = () => {
+        if (state.simulations.isPlaying) {
+            state.simulations.isPlaying = false;
+            if (state.simulations.playInterval) {
+                clearInterval(state.simulations.playInterval);
+                state.simulations.playInterval = null;
+            }
+        }
+        
+        const editorWindow = browserFrame.querySelector('#trimmer-window-editor');
+        const savingOverlay = browserFrame.querySelector('#trimmer-saving-overlay');
+        const progressBar = browserFrame.querySelector('#trimmer-bar-fill');
+        
         editorWindow.style.display = 'none';
         savingOverlay.style.display = 'flex';
-
-        let p = 0;
+        
+        let progressVal = 0;
         const interval = setInterval(() => {
-            p += 20;
-            progressBar.style.width = `${p}%`;
-            if (p >= 100) {
+            progressVal += 10;
+            progressBar.style.width = `${progressVal}%`;
+            
+            if (progressVal >= 100) {
                 clearInterval(interval);
                 state.trimmedFile = {
                     name: 'Persian_Tutorial_Session_Trimmed.mp4',
-                    start: '00:00',
-                    end: '04:00',
+                    start: formatTimeShort(state.simulations.cutterStartSec || 0),
+                    end: formatTimeShort(state.simulations.cutterEndSec || 240),
                     size: '32 MB'
                 };
                 showToast("All segments trimmed! Saved to Downloads folder.");
                 renderSandbox(2);
             }
-        }, 300);
-    });
+        }, 250);
+    };
+
+    const trimAllBtn = browserFrame.querySelector('#trimmer-trim-all');
+    const trimAllRightBtn = browserFrame.querySelector('#trimmer-trim-all-right');
+
+    if (trimAllBtn) trimAllBtn.addEventListener('click', runTrimAll);
+    if (trimAllRightBtn) trimAllRightBtn.addEventListener('click', runTrimAll);
 }
 
 // Lingochaps Simulator (Replicating exact UI layout from screenshots)
