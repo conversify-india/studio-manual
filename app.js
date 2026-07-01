@@ -298,12 +298,12 @@ function setupEventListeners() {
         resetStepSandbox();
     });
 
-    const instructionPanel = document.querySelector('.instruction-panel');
-    if (els.toggleLayoutBtn && instructionPanel) {
+    const sidebar = document.querySelector('.sidebar');
+    if (els.toggleLayoutBtn && sidebar) {
         els.toggleLayoutBtn.addEventListener('click', () => {
-            instructionPanel.classList.toggle('collapsed');
-            if (instructionPanel.classList.contains('collapsed')) {
-                els.toggleLayoutBtn.textContent = "Show Instructions";
+            sidebar.classList.toggle('collapsed');
+            if (sidebar.classList.contains('collapsed')) {
+                els.toggleLayoutBtn.textContent = "Show Menu";
             } else {
                 els.toggleLayoutBtn.textContent = "Expand Workspace";
             }
