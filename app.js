@@ -82,7 +82,8 @@ const state = {
         cutterStartSec: null,
         cutterEndSec: null,
         isPlaying: false,
-        selectedQueueIdx: null
+        selectedQueueIdx: null,
+        convertToMp3: false
     }
 };
 
@@ -1058,6 +1059,11 @@ function renderCutterSandbox() {
                                 ${saveLocationText}
                             </div>
                         </div>
+                        <div style="margin-bottom: 8px;">
+                            <label style="display:inline-flex; align-items:center; gap:6px; font-size:0.76rem; color:#cacada; cursor:pointer;">
+                                <input type="checkbox" id="trimmer-mp3-toggle" style="accent-color:#3b82f6;" ${state.simulations.convertToMp3 ? 'checked' : ''}> Convert to MP3
+                            </label>
+                        </div>
                         <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px;">
                             <button class="trimmer-btn-dark" id="export-open-folder-btn" style="padding:5px 12px; font-size:0.76rem;" ${isLoaded ? '' : 'disabled'}>Open Folder</button>
                             <button class="trimmer-btn-primary" id="trimmer-trim-all" style="background:#10b981; border-color:#059669;" ${isLoaded && state.simulations.trimQueue.length > 0 ? '' : 'disabled'}>Trim All</button>
@@ -1395,6 +1401,18 @@ function renderCutterSandbox() {
     if (openFolderBtn) {
         openFolderBtn.addEventListener('click', () => {
             showToast("Opened folder: /Users/snigdha/Downloads/trimmed_video/");
+        });
+    }
+
+    const mp3Toggle = browserFrame.querySelector('#trimmer-mp3-toggle');
+    if (mp3Toggle) {
+        mp3Toggle.addEventListener('change', () => {
+            state.simulations.convertToMp3 = mp3Toggle.checked;
+            if (mp3Toggle.checked) {
+                showToast("Enabled Convert to MP3 export setting.");
+            } else {
+                showToast("Disabled Convert to MP3 setting.");
+            }
         });
     }
 
